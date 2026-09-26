@@ -1,0 +1,77 @@
+---
+import { Menu, X } from '@lucide/astro';
+import { NAV_LINKS, SECONDARY_LINKS } from '../data/site';
+import SocialLinks from './SocialLinks.astro';
+---
+
+<button
+  type="button"
+  id="mobile-menu-button"
+  aria-label="Open menu"
+  aria-expanded="false"
+  aria-controls="mobile-menu"
+  class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg"
+>
+  <Menu class="h-4 w-4" data-icon="menu-open" />
+  <X class="hidden h-4 w-4" data-icon="menu-close" />
+</button>
+
+<div
+  id="mobile-menu"
+  class="fixed inset-x-0 top-16 bottom-0 z-30 hidden flex-col overflow-y-auto bg-bg opacity-0 translate-y-2 transition-all duration-200 lg:hidden"
+>
+  <nav class="flex flex-1 flex-col gap-1 px-5 pt-6" aria-label="Mobile primary">
+    {
+      NAV_LINKS.map((link) => (
+        <a href={link.href} class="border-b border-border py-4 text-lg font-medium">
+          {link.label}
+        </a>
+      ))
+    }
+    {
+      SECONDARY_LINKS.map((link) => (
+        <a href={link.href} class="border-b border-border py-4 text-lg font-medium text-fg-muted">
+          {link.label}
+        </a>
+      ))
+    }
+  </nav>
+  <div class="px-5 py-6">
+    <SocialLinks includeEmail />
+  </div>
+</div>
+
+<script>
+  const button = document.getElementById('mobile-menu-button');
+  const menu = document.getElementById('mobile-menu');
+
+  function setOpen(open: boolean) {
+    if (!button || !menu) return;
+    button.setAttribute('aria-expanded', String(open));
+    button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    button.querySelector('[data-icon="menu-open"]')?.classList.toggle('hidden', open);
+    button.querySelector('[data-icon="menu-close"]')?.classList.toggle('hidden', !open);
+    document.body.classList.toggle('overflow-hidden', open);
+
+    if (open) {
+      menu.classList.remove('hidden');
+      menu.classList.add('flex');
+      requestAnimationFrame(() => {
+        menu.classList.remove('opacity-0', 'translate-y-2');
+      });
+    } else {
+      menu.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => {
+        menu.classList.add('hidden');
+        menu.classList.remove('flex');
+      }, 200);
+    }
+  }
+
+  button?.addEventListener('click', () => {
+    const isOpen = button.getAttribute('aria-expanded') === 'true';
+    setOpen(!isOpen);
+  });
+
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+</script>

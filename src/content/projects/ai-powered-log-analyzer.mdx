@@ -1,0 +1,26 @@
+---
+title: "AI-Powered Log Analyzer"
+summary: "A log analysis tool that uses OpenAI's GPT-4 API to automatically analyze and summarize application logs, cutting through noisy output to surface what matters."
+problem: "Reading through large volumes of raw application logs to find the root cause of an issue is slow, and most of the content in a log file isn't relevant to the problem at hand."
+whyBuilt: "Wanted to apply GPT-4 to a concrete backend workflow (log triage) rather than a generic chat interface, and see how far prompt-based summarization could go on real log volume."
+solution: "A Java backend that ingests log files, batches and rate-limits requests to the OpenAI API to stay within usage limits, and returns a structured summary of what happened instead of a wall of raw text."
+techStack: ["Java", "OpenAI API", "Spring Boot", "REST APIs"]
+category: "AI"
+status: "Live"
+coverImage: "circuit"
+coverAlt: "Abstract circuit-like line graphic"
+githubUrl: "https://github.com/gouselabs"
+featured: false
+order: 1
+publishDate: 2026-01-01
+placeholder: false
+---
+
+## How it's built
+
+- Asynchronous request processing, request batching, and rate limiting to
+  efficiently handle large log files while complying with OpenAI API limits.
+- Modular backend components for log parsing, prompt generation, AI response
+  processing, and structured result presentation.
+
+Source is on [GitHub](https://github.com/gouselabs).

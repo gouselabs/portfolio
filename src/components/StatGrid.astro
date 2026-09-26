@@ -1,0 +1,48 @@
+---
+import * as icons from '@lucide/astro';
+
+interface Stat {
+  icon: string;
+  value: string;
+  label: string;
+}
+
+interface Props {
+  stats: readonly Stat[];
+  columns?: 3 | 4 | 6;
+  class?: string;
+}
+
+const { stats, columns = 4, class: className = '' } = Astro.props;
+
+const colClasses = {
+  3: 'sm:grid-cols-3',
+  4: 'sm:grid-cols-4',
+  6: 'sm:grid-cols-3 lg:grid-cols-6',
+};
+
+function toPascalCase(kebab: string) {
+  return kebab
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+const iconMap = icons as unknown as Record<string, typeof icons.Wrench>;
+---
+
+<div data-reveal-group class:list={['grid grid-cols-2 gap-4', colClasses[columns], className]}>
+  {
+    stats.map((stat) => {
+      const Icon = iconMap[toPascalCase(stat.icon)] ?? icons.Wrench;
+      return (
+        <div class="hover-glow rounded-2xl border border-border bg-surface p-5 text-center">
+          <span class="mx-auto inline-flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent">
+            <Icon class="h-4 w-4" aria-hidden="true" />
+          </span>
+          <p class="mt-3 font-display text-2xl font-medium text-accent">{stat.value}</p>
+          <p class="mt-1 text-xs text-fg-muted">{stat.label}</p>
+        </div>
+      );
+    })
+  }
+</div>

@@ -1,0 +1,121 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import { PenLine } from '@lucide/astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import Search from '../../components/Search.astro';
+import Pagination from '../../components/Pagination.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import Badge from '../../components/Badge.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+  );
+  return paginate(posts, { pageSize: 9 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const categories = ['All', ...new Set(allPosts.map((p) => p.data.category))];
+const featured = allPosts.find((p) => p.data.featured);
+---
+
+<BaseLayout title="Blog" description="Technical writing on backend engineering, systems, and build logs.">
+  <Container class="py-16 sm:py-24">
+    <div class="max-w-2xl">
+      <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Blog</span>
+      <h1 class="mt-4 text-balance font-display text-4xl font-medium sm:text-5xl">Writing</h1>
+    </div>
+
+    {
+      allPosts.length === 0 ? (
+        <EmptyState
+          class="mt-12"
+          icon={PenLine}
+          title="No articles yet"
+          description="I haven't published anything here yet. The first post is on its way, so check back soon."
+        />
+      ) : (
+        <>
+          {page.currentPage === 1 && featured && (
+            <div class="mt-12">
+              <Badge variant="accent" class="mb-4">Featured</Badge>
+              <BlogCard post={featured} featured />
+            </div>
+          )}
+
+          <div class="mt-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <Search placeholder="Search posts..." targetSelector="[data-post-item]" emptyStateSelector="#blog-empty" class="max-w-sm" />
+            <div class="flex flex-wrap gap-2" role="group" aria-label="Filter posts by category">
+              {categories.map((category) => (
+                <button
+                  type="button"
+                  data-filter={category}
+                  class:list={[
+                    'rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+                    category === 'All' ? 'border-fg bg-fg text-bg' : 'border-border text-fg-muted hover:border-fg hover:text-fg',
+                  ]}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div id="blog-grid" class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {page.data.map((post) => (
+              <div
+                data-post-item
+                data-category={post.data.category}
+                data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`}
+              >
+                <BlogCard post={post} />
+              </div>
+            ))}
+          </div>
+
+          <div id="blog-empty" class="mt-10 hidden">
+            <EmptyState title="No posts found" description="Try a different search term or category." />
+          </div>
+
+          <div class="mt-6">
+            <Pagination currentPage={page.currentPage} totalPages={page.lastPage} basePath="/blog" />
+          </div>
+        </>
+      )
+    }
+  </Container>
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const items = document.querySelectorAll<HTMLElement>('[data-post-item]');
+  const emptyState = document.getElementById('blog-empty');
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter;
+
+      buttons.forEach((b) => {
+        const active = b === button;
+        b.classList.toggle('border-fg', active);
+        b.classList.toggle('bg-fg', active);
+        b.classList.toggle('text-bg', active);
+        b.classList.toggle('border-border', !active);
+        b.classList.toggle('text-fg-muted', !active);
+      });
+
+      let visibleCount = 0;
+      items.forEach((item) => {
+        const matches = filter === 'All' || item.dataset.category === filter;
+        item.classList.toggle('hidden', !matches);
+        if (matches) visibleCount += 1;
+      });
+
+      emptyState?.classList.toggle('hidden', visibleCount !== 0);
+    });
+  });
+</script>

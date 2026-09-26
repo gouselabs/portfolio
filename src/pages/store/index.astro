@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import Badge from '../../components/Badge.astro';
+import { Store } from '@lucide/astro';
+
+const plannedCategories = [
+  'Wallpapers',
+  'Developer templates',
+  'Digital resources',
+  'UI assets',
+  'Photography',
+  'E-books',
+];
+---
+
+<BaseLayout title="Store" description="Digital products, coming soon. Wallpapers, developer templates, digital resources, and more.">
+  <Container class="py-16 sm:py-24">
+    <div class="max-w-2xl">
+      <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Store</span>
+      <h1 class="mt-4 text-balance font-display text-4xl font-medium sm:text-5xl">Digital Store</h1>
+      <p class="mt-4 text-fg-muted">
+        The store isn't open yet. Once it launches, this is where digital products (wallpapers,
+        templates, and resources) will be available.
+      </p>
+    </div>
+
+    <EmptyState
+      class="mt-12"
+      icon={Store}
+      title="No products yet"
+      description="The store is being built. In the meantime, check out the free resources page."
+    >
+      <a href="/resources" class="mt-2 text-sm font-medium text-accent hover:underline">Browse free resources →</a>
+    </EmptyState>
+
+    <div class="mt-12">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Planned categories</p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        {plannedCategories.map((category) => <Badge variant="outline">{category}</Badge>)}
+      </div>
+    </div>
+  </Container>
+</BaseLayout>

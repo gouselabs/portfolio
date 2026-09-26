@@ -1,0 +1,55 @@
+---
+import Container from './Container.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import MobileMenu from './MobileMenu.astro';
+import { NAV_LINKS, SITE } from '../data/site';
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string) {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<header class="sticky top-0 z-40 border-b border-border bg-bg/85 backdrop-blur-md">
+  <Container class="flex h-16 items-center justify-between">
+    <a href="/" class="font-display text-lg font-semibold tracking-tight">
+      {SITE.brand}
+    </a>
+
+    <nav class="hidden items-center gap-8 lg:flex" aria-label="Primary">
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'relative py-1 text-sm font-medium transition-colors',
+              isActive(link.href) ? 'text-accent' : 'text-fg-muted hover:text-fg',
+            ]}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+          >
+            {link.label}
+            {isActive(link.href) && <span class="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-accent" aria-hidden="true" />}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="hidden items-center gap-3 lg:flex">
+      <a href="/resume" class="text-sm font-medium text-fg-muted transition-colors hover:text-fg">Resume</a>
+      <a
+        href="/contact"
+        class="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-[0_4px_16px_-4px_var(--color-accent)] transition-all hover:bg-accent-hover hover:-translate-y-0.5"
+      >
+        Contact
+      </a>
+      <ThemeToggle />
+    </div>
+
+    <div class="flex items-center gap-2 lg:hidden">
+      <ThemeToggle />
+      <MobileMenu />
+    </div>
+  </Container>
+</header>

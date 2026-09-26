@@ -1,0 +1,29 @@
+---
+import AbstractArt from './AbstractArt.astro';
+import Badge from './Badge.astro';
+
+interface Props {
+  slug: string;
+  title: string;
+  description: string;
+  price: string;
+  category: string;
+}
+
+const { slug, title, description, price, category } = Astro.props;
+---
+
+<article class="hover-glow group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+  <a href={`/store/${slug}`} class="absolute inset-0 z-10" aria-label={`View product: ${title}`}></a>
+
+  <div class="aspect-square overflow-hidden">
+    <AbstractArt seed={slug} variant="circuit" class="transition-transform duration-500 group-hover:scale-105" />
+  </div>
+
+  <div class="flex flex-1 flex-col gap-2 p-6">
+    <Badge variant="outline" class="w-fit">{category}</Badge>
+    <h3 class="font-display text-lg font-medium">{title}</h3>
+    <p class="text-sm text-fg-muted">{description}</p>
+    <p class="mt-auto pt-3 font-mono text-sm font-medium text-accent">{price}</p>
+  </div>
+</article>

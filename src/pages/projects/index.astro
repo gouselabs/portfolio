@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import EmptyState from '../../components/EmptyState.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const categories = ['All', ...new Set(projects.map((p) => p.data.category))];
+---
+
+<BaseLayout title="Projects" description="Serious engineering work: backend systems, full-stack products, AI experiments, and developer tools.">
+  <Container class="py-16 sm:py-24">
+    <div class="max-w-2xl">
+      <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Projects</span>
+      <h1 class="mt-4 text-balance font-display text-4xl font-medium sm:text-5xl">Things I've Built</h1>
+      <p class="mt-4 text-fg-muted">
+        A collection of projects focused on solving real problems through software, from backend
+        systems to full-stack products and applied AI experiments.
+      </p>
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter projects by category">
+      {
+        categories.map((category) => (
+          <button
+            type="button"
+            data-filter={category}
+            class:list={[
+              'rounded-full border px-4 py-2 text-sm font-medium transition-colors',
+              category === 'All' ? 'border-fg bg-fg text-bg' : 'border-border text-fg-muted hover:border-fg hover:text-fg',
+            ]}
+          >
+            {category}
+          </button>
+        ))
+      }
+    </div>
+
+    <div id="project-grid" class="mt-10 grid gap-6 lg:grid-cols-2">
+      {
+        projects.map((project) => (
+          <div data-project-item data-category={project.data.category}>
+            <ProjectCard project={project} />
+          </div>
+        ))
+      }
+    </div>
+
+    <div id="projects-empty" class="mt-10 hidden">
+      <EmptyState title="No projects in this category yet" description="Try a different filter." />
+    </div>
+  </Container>
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const items = document.querySelectorAll<HTMLElement>('[data-project-item]');
+  const emptyState = document.getElementById('projects-empty');
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter;
+
+      buttons.forEach((b) => {
+        const active = b === button;
+        b.classList.toggle('border-fg', active);
+        b.classList.toggle('bg-fg', active);
+        b.classList.toggle('text-bg', active);
+        b.classList.toggle('border-border', !active);
+        b.classList.toggle('text-fg-muted', !active);
+      });
+
+      let visibleCount = 0;
+      items.forEach((item) => {
+        const matches = filter === 'All' || item.dataset.category === filter;
+        item.classList.toggle('hidden', !matches);
+        if (matches) visibleCount += 1;
+      });
+
+      emptyState?.classList.toggle('hidden', visibleCount !== 0);
+    });
+  });
+</script>

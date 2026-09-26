@@ -1,0 +1,44 @@
+---
+import * as icons from '@lucide/astro';
+import Badge from './Badge.astro';
+import { SKILL_GROUPS } from '../data/resume';
+
+interface Props {
+  class?: string;
+  compact?: boolean;
+}
+
+const { class: className = '', compact = false } = Astro.props;
+
+function toPascalCase(kebab: string) {
+  return kebab
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+const iconMap = icons as unknown as Record<string, typeof icons.Wrench>;
+const groups = compact ? SKILL_GROUPS.slice(0, 6) : SKILL_GROUPS;
+---
+
+<div data-reveal-group class:list={['grid gap-5 sm:grid-cols-2', compact ? 'lg:grid-cols-3' : '', className]}>
+  {
+    groups.map((group) => {
+      const Icon = iconMap[toPascalCase(group.icon)] ?? icons.Wrench;
+      return (
+        <div class="hover-glow rounded-2xl border border-border bg-surface p-5">
+          <div class="flex items-center gap-2.5">
+            <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft text-accent">
+              <Icon class="h-4 w-4" aria-hidden="true" />
+            </span>
+            <p class="font-medium">{group.label}</p>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {group.skills.map((skill) => (
+              <Badge variant="outline">{skill}</Badge>
+            ))}
+          </div>
+        </div>
+      );
+    })
+  }
+</div>

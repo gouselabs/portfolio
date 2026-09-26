@@ -1,0 +1,126 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Container from '../components/Container.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Badge from '../components/Badge.astro';
+import Tag from '../components/Tag.astro';
+import AbstractArt from '../components/AbstractArt.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import AuthorBox from '../components/AuthorBox.astro';
+import ShareButtons from '../components/ShareButtons.astro';
+import CodeBlockEnhancer from '../components/CodeBlockEnhancer.astro';
+import PlaceholderNotice from '../components/PlaceholderNotice.astro';
+import BlogCard from '../components/BlogCard.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { formatDate, readingTime } from '../lib/format';
+import { SITE } from '../data/site';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  related: CollectionEntry<'blog'>[];
+}
+
+const { post, related } = Astro.props;
+const { data, id, body } = post;
+
+const pageUrl = new URL(`/blog/${id}`, SITE.url).toString();
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: data.title,
+  description: data.description,
+  datePublished: data.publishDate.toISOString(),
+  dateModified: (data.updatedDate ?? data.publishDate).toISOString(),
+  author: { '@type': 'Person', name: data.author },
+};
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  type="article"
+  publishDate={data.publishDate}
+  updatedDate={data.updatedDate}
+  structuredData={structuredData}
+>
+  <article>
+    <div class="aspect-[21/9] w-full overflow-hidden">
+      <AbstractArt seed={id} variant="waves" />
+    </div>
+
+    <Container narrow class="py-10 sm:py-14">
+      <Breadcrumb items={[{ label: 'Blog', href: '/blog' }, { label: data.title }]} />
+
+      {data.placeholder && <PlaceholderNotice class="mt-6" />}
+
+      <div class="mt-6">
+        <Badge variant="accent">{data.category}</Badge>
+        <h1 class="mt-4 text-balance text-3xl font-medium sm:text-4xl lg:text-5xl">{data.title}</h1>
+        <p class="mt-4 text-lg text-fg-muted">{data.description}</p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3 font-mono text-xs text-fg-muted">
+          <span>By {data.author}</span>
+          <span aria-hidden="true">·</span>
+          <time datetime={data.publishDate.toISOString()}>{formatDate(data.publishDate)}</time>
+          {
+            data.updatedDate && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>Updated {formatDate(data.updatedDate)}</span>
+              </>
+            )
+          }
+          <span aria-hidden="true">·</span>
+          <span>{readingTime(body ?? '')}</span>
+        </div>
+      </div>
+    </Container>
+
+    <Container class="grid gap-12 pb-16 lg:grid-cols-[220px_1fr]">
+      <TableOfContents />
+
+      <div class="mx-auto w-full max-w-3xl">
+        <div class="prose prose-neutral">
+          <slot />
+        </div>
+
+        {
+          data.tags.length > 0 && (
+            <div class="mt-8 flex flex-wrap gap-2">
+              {data.tags.map((tag) => (
+                <Tag>{tag}</Tag>
+              ))}
+            </div>
+          )
+        }
+
+        <div class="mt-10 flex flex-col gap-6 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <ShareButtons title={data.title} url={pageUrl} />
+        </div>
+
+        <div class="mt-8">
+          <AuthorBox />
+        </div>
+      </div>
+    </Container>
+
+    {
+      related.length > 0 && (
+        <div class="border-t border-border py-16">
+          <Container>
+            <SectionHeading eyebrow="Keep reading" title="Related posts" />
+            <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((p) => (
+                <BlogCard post={p} />
+              ))}
+            </div>
+          </Container>
+        </div>
+      )
+    }
+  </article>
+
+  <CodeBlockEnhancer />
+</BaseLayout>

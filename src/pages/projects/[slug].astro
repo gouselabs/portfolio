@@ -1,0 +1,24 @@
+---
+import { getCollection, render } from 'astro:content';
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const allProjects = await getCollection('projects');
+const related = allProjects
+  .filter((p) => p.id !== project.id && p.data.category === project.data.category)
+  .slice(0, 3);
+---
+
+<ProjectLayout project={project} related={related}>
+  <Content />
+</ProjectLayout>

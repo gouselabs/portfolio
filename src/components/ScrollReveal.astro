@@ -1,0 +1,85 @@
+---
+// Lightweight scroll-reveal: no animation library. An IntersectionObserver
+// is the primary mechanism (see global.css for the [data-reveal] /
+// [data-reveal-group] classes it toggles), backed by a throttled scroll/
+// resize fallback and a hard timeout, so content already starts at
+// opacity:0 in CSS, and must never depend on a single API firing to become
+// visible again.
+---
+
+<script>
+  function initScrollReveal() {
+    const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal], [data-reveal-group]'));
+    if (targets.length === 0) return;
+
+    const revealAll = () => {
+      targets.forEach((el) => el.classList.add('is-revealed'));
+    };
+
+    if (!('IntersectionObserver' in window)) {
+      revealAll();
+      return;
+    }
+
+    const remaining = new Set(targets);
+
+    const reveal = (el: HTMLElement) => {
+      el.classList.add('is-revealed');
+      remaining.delete(el);
+      if (remaining.size === 0) {
+        cleanupFallback();
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            reveal(entry.target as HTMLElement);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+    );
+
+    targets.forEach((el) => observer.observe(el));
+
+    // Fallback: some environments (older browsers, unusual embeds, or the
+    // rare misbehaving observer) never fire a callback at all. A throttled
+    // scroll/resize check catches anything already in view, and a timeout
+    // guarantees nothing stays invisible forever.
+    let ticking = false;
+    function checkManually() {
+      const viewportBottom = window.innerHeight * 1.08;
+      remaining.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < viewportBottom && rect.bottom > 0) {
+          reveal(el);
+          observer.unobserve(el);
+        }
+      });
+      ticking = false;
+    }
+    function onScrollOrResize() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(checkManually);
+    }
+
+    function cleanupFallback() {
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+      clearTimeout(fallbackTimer);
+    }
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize);
+    checkManually();
+
+    const fallbackTimer = setTimeout(revealAll, 2500);
+  }
+
+  initScrollReveal();
+  document.addEventListener('astro:page-load', initScrollReveal);
+</script>

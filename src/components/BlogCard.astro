@@ -1,0 +1,33 @@
+---
+import AbstractArt from './AbstractArt.astro';
+import Badge from './Badge.astro';
+import { formatDate, readingTime } from '../lib/format';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+const { data, id, body } = post;
+---
+
+<article class:list={['hover-glow group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface', featured ? 'md:col-span-2 md:flex-row' : '']}>
+  <a href={`/blog/${id}`} class="absolute inset-0 z-10" aria-label={`Read: ${data.title}`}></a>
+
+  <div class:list={['aspect-[16/9] overflow-hidden', featured ? 'md:aspect-auto md:w-1/2' : '']}>
+    <AbstractArt seed={id} variant="waves" class="transition-transform duration-500 group-hover:scale-105" />
+  </div>
+
+  <div class="flex flex-1 flex-col gap-3 p-6">
+    <Badge variant="accent" class="w-fit">{data.category}</Badge>
+    <h3 class:list={['font-display font-medium', featured ? 'text-2xl' : 'text-lg']}>{data.title}</h3>
+    <p class="text-sm text-fg-muted">{data.description}</p>
+    <div class="mt-auto flex items-center gap-3 pt-2 font-mono text-xs text-fg-muted">
+      <time datetime={data.publishDate.toISOString()}>{formatDate(data.publishDate)}</time>
+      <span aria-hidden="true">·</span>
+      <span>{readingTime(body ?? '')}</span>
+    </div>
+  </div>
+</article>

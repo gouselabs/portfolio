@@ -1,0 +1,137 @@
+---
+import * as icons from '@lucide/astro';
+import { Wrench, Server, Sparkles, FlaskConical } from '@lucide/astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Badge from '../components/Badge.astro';
+import Button from '../components/Button.astro';
+import StatGrid from '../components/StatGrid.astro';
+import ProfilePhoto from '../components/ProfilePhoto.astro';
+import { ENGINEERING_FOCUS, SITE } from '../data/site';
+import { SUMMARY, HERO_STATS, FOCUS_AREAS } from '../data/resume';
+
+function toPascalCase(kebab: string) {
+  return kebab
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+const iconMap = icons as unknown as Record<string, typeof icons.Wrench>;
+
+const buildCategories = [
+  {
+    icon: Wrench,
+    title: 'Developer tools',
+    description: 'Small utilities that remove a specific piece of daily friction, usually built because I needed it myself first.',
+  },
+  {
+    icon: Server,
+    title: 'Backend systems',
+    description: 'Low-latency, event-driven services focused on correctness and resilience under real production load.',
+  },
+  {
+    icon: Sparkles,
+    title: 'AI-powered applications',
+    description: 'Finding the narrow, concrete places where an LLM genuinely improves a workflow, like summarizing and triaging application logs.',
+  },
+  {
+    icon: FlaskConical,
+    title: 'Personal products & experiments',
+    description: 'Smaller side builds used to learn a new part of the stack or test an idea quickly.',
+  },
+];
+---
+
+<BaseLayout title="About" description={`The story behind ${SITE.fullName}: what I build, what I focus on, and what I'm currently exploring.`}>
+  <section class="border-b border-border py-16 sm:py-24">
+    <Container narrow>
+      <div data-reveal class="flex flex-col items-center gap-6 text-center">
+        <div class="relative h-32 w-32">
+          <div class="pointer-events-none absolute -inset-3 rounded-full bg-accent/20 blur-2xl" aria-hidden="true"></div>
+          <div class="relative h-full w-full overflow-hidden rounded-full border-2 border-accent/40 shadow-xl">
+            <ProfilePhoto size={256} priority />
+          </div>
+        </div>
+        <div>
+          <h1 class="font-display text-3xl font-medium sm:text-4xl">{SITE.fullName}</h1>
+          <p class="mt-2 text-fg-muted">Backend Software Engineer · Mumbai, India</p>
+        </div>
+        <p class="max-w-xl text-balance text-fg-muted">{SUMMARY}</p>
+      </div>
+
+      <StatGrid stats={HERO_STATS} class="mt-14" />
+    </Container>
+  </section>
+
+  <section class="border-b border-border py-16 sm:py-24">
+    <Container narrow>
+      <SectionHeading eyebrow="About me" title="Beyond the Resume" />
+      <p data-reveal class="mt-8 text-lg leading-relaxed text-fg-muted">
+        I'm always curious about how software works beyond the code, from system design and
+        distributed systems to developer tools and AI. I like experimenting with ideas, building
+        small projects, and turning what I learn into something useful.
+      </p>
+    </Container>
+  </section>
+
+  <section class="border-b border-border py-16 sm:py-24">
+    <Container narrow>
+      <SectionHeading eyebrow="Engineering focus" title="What I work with" description="Only the technologies that are genuinely relevant, not an exhaustive keyword list." />
+      <div data-reveal-group class="mt-8 flex flex-wrap gap-2">
+        {ENGINEERING_FOCUS.map((tag) => <Badge variant="accent">{tag}</Badge>)}
+      </div>
+    </Container>
+  </section>
+
+  <section class="border-b border-border py-16 sm:py-24">
+    <Container narrow>
+      <SectionHeading eyebrow="What I build" title="Categories of work" />
+      <div data-reveal-group class="mt-10 grid gap-6 sm:grid-cols-2">
+        {
+          buildCategories.map((category) => (
+            <div class="hover-glow group rounded-2xl border border-border bg-surface p-6">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-soft text-accent transition-transform group-hover:scale-110">
+                <category.icon class="h-5 w-5" aria-hidden="true" />
+              </span>
+              <h3 class="mt-4 font-display text-lg font-medium">{category.title}</h3>
+              <p class="mt-2 text-sm text-fg-muted">{category.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <section class="border-b border-border py-16 sm:py-24">
+    <Container narrow>
+      <SectionHeading eyebrow="Currently focused on" title="What's on my mind lately" description="A high-level view, not a day-to-day list, grounded in what I'm actually building and studying." />
+      <div data-reveal-group class="mt-8 grid gap-3 sm:grid-cols-2">
+        {
+          FOCUS_AREAS.map((item) => {
+            const Icon = iconMap[toPascalCase(item.icon)] ?? icons.Sparkles;
+            return (
+              <div class="hover-glow flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3">
+                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+                  <Icon class="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span class="text-sm font-medium">{item.label}</span>
+              </div>
+            );
+          })
+        }
+      </div>
+    </Container>
+  </section>
+
+  <section class="py-16 sm:py-24">
+    <Container narrow class="text-center">
+      <h2 class="font-display text-2xl font-medium sm:text-3xl">Want to see the work?</h2>
+      <div class="mt-6 flex flex-wrap justify-center gap-4">
+        <Button href="/projects" showArrow>View projects</Button>
+        <Button href="/blog" variant="secondary">Read the blog</Button>
+        <Button href="/contact" variant="ghost">Contact</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

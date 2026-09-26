@@ -1,0 +1,50 @@
+---
+import { Copy, Check } from '@lucide/astro';
+
+interface Props {
+  text?: string;
+  class?: string;
+  label?: string;
+}
+
+const { text, class: className = '', label = 'Copy' } = Astro.props;
+---
+
+<button
+  type="button"
+  data-copy-button
+  data-copy-text={text}
+  aria-label={label}
+  class:list={[
+    'inline-flex h-8 w-8 items-center justify-center rounded-md text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg',
+    className,
+  ]}
+>
+  <Copy class="h-4 w-4" data-icon="copy" aria-hidden="true" />
+  <Check class="hidden h-4 w-4 text-accent" data-icon="check" aria-hidden="true" />
+</button>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-button]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const explicit = button.dataset.copyText;
+      const text = explicit ?? button.closest('[data-code-block]')?.querySelector('code')?.textContent ?? '';
+      if (!text) return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Copied to clipboard' } }));
+        const copyIcon = button.querySelector<HTMLElement>('[data-icon="copy"]');
+        const checkIcon = button.querySelector<HTMLElement>('[data-icon="check"]');
+        copyIcon?.classList.add('hidden');
+        checkIcon?.classList.remove('hidden');
+        setTimeout(() => {
+          copyIcon?.classList.remove('hidden');
+          checkIcon?.classList.add('hidden');
+        }, 1500);
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+    });
+  });
+</script>

@@ -1,0 +1,49 @@
+---
+import { Download, ExternalLink, Clock } from '@lucide/astro';
+import AbstractArt from './AbstractArt.astro';
+import Badge from './Badge.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  resource: CollectionEntry<'resources'>;
+}
+
+const { resource } = Astro.props;
+const { data, id } = resource;
+const isExternal = /^https?:\/\//.test(data.downloadUrl);
+---
+
+<article class="hover-glow flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+  <div class="aspect-[4/3] overflow-hidden">
+    <AbstractArt seed={id} variant="grid" />
+  </div>
+
+  <div class="flex flex-1 flex-col gap-3 p-6">
+    <div class="flex items-center gap-2">
+      <Badge variant="outline">{data.type}</Badge>
+      <Badge variant={data.free ? 'accent' : 'default'}>{data.free ? 'Free' : 'Paid'}</Badge>
+    </div>
+
+    <h3 class="font-display text-lg font-medium">{data.title}</h3>
+    <p class="text-sm text-fg-muted">{data.description}</p>
+
+    {
+      data.placeholder ? (
+        <span class="mt-auto inline-flex items-center gap-2 pt-3 text-sm font-medium text-fg-muted">
+          <Clock class="h-4 w-4" aria-hidden="true" />
+          Coming soon
+        </span>
+      ) : (
+        <a
+          href={data.downloadUrl}
+          target={isExternal ? '_blank' : undefined}
+          rel={isExternal ? 'noopener noreferrer' : undefined}
+          class="mt-auto inline-flex items-center gap-2 pt-3 text-sm font-medium text-fg transition-colors hover:text-accent"
+        >
+          {data.free ? <Download class="h-4 w-4" aria-hidden="true" /> : <ExternalLink class="h-4 w-4" aria-hidden="true" />}
+          {data.free ? 'Download' : 'Get it'}
+        </a>
+      )
+    }
+  </div>
+</article>

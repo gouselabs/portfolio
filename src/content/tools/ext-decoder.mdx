@@ -1,0 +1,25 @@
+---
+title: "Ext Decoder"
+summary: "Type any filename or extension and instantly learn what the file is, what opens it, and whether to be careful."
+problem: "Unfamiliar file extensions and dotfiles are confusing, and a file's extension says little about whether its contents are safe."
+features:
+  - "Instant lookup for 150+ extensions, dotfiles and extensionless filenames"
+  - "\"Did you mean\" suggestions for unknown extensions"
+  - "Handles ambiguous (.ts, .key, .pkg) and compound (.tar.gz) extensions"
+  - "Explains editability, conversion options and associated software"
+  - "Separates format info from safety guidance"
+  - "100% client-side with zero external calls"
+howItWorks: "The filename is parsed into a canonical type, then looked up against curated datasets: ambiguous entries first, then the main dataset, then a fuzzy fallback for suggestions. All logic is synchronous and runs in the browser."
+techStack: ["Astro", "TypeScript", "Vitest"]
+category: "Utilities"
+status: "Live"
+icon: "file-type"
+coverImage: "circuit"
+coverAlt: "Abstract circuit graphic"
+toolUrl: "https://extdecoder.gouselabs.com/"
+repoUrl: "https://github.com/gouselabs/ext-decoder"
+featured: true
+order: 3
+publishDate: 2026-03-05
+placeholder: false
+---

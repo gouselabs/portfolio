@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import AbstractArt from '../components/AbstractArt.astro';
+import { Mail, Phone, MapPin, Send } from '@lucide/astro';
+import { SITE } from '../data/site';
+---
+
+<BaseLayout title="Contact" description={`Get in touch with ${SITE.fullName}.`}>
+  <Container class="py-16 sm:py-24">
+    <div data-reveal class="max-w-2xl">
+      <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Contact</span>
+      <h1 class="mt-4 text-balance font-display text-4xl font-medium sm:text-5xl">Let's work together</h1>
+      <p class="mt-4 text-fg-muted">
+        Have a project in mind, a question about something I've built, or just want to say hi? My
+        inbox is open.
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+      <div data-reveal class="space-y-6">
+        <div class="space-y-3">
+          <a href={`mailto:${SITE.email}`} class="hover-glow flex items-center gap-3 rounded-xl border border-border bg-surface p-4">
+            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+              <Mail class="h-4 w-4" aria-hidden="true" />
+            </span>
+            <span>
+              <span class="block text-xs text-fg-muted">Email</span>
+              <span class="font-medium">{SITE.email}</span>
+            </span>
+          </a>
+          <a href={`tel:${SITE.phone.replace(/\s+/g, '')}`} class="hover-glow flex items-center gap-3 rounded-xl border border-border bg-surface p-4">
+            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+              <Phone class="h-4 w-4" aria-hidden="true" />
+            </span>
+            <span>
+              <span class="block text-xs text-fg-muted">Phone</span>
+              <span class="font-medium">{SITE.phone}</span>
+            </span>
+          </a>
+          <div class="flex items-center gap-3 rounded-xl border border-border bg-surface p-4">
+            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+              <MapPin class="h-4 w-4" aria-hidden="true" />
+            </span>
+            <span>
+              <span class="block text-xs text-fg-muted">Location</span>
+              <span class="font-medium">{SITE.location}</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="border-t border-border pt-6">
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Elsewhere</p>
+          <SocialLinks class="mt-4" />
+        </div>
+      </div>
+
+      <div data-reveal class="relative overflow-hidden rounded-2xl border border-border bg-surface">
+        <div class="pointer-events-none absolute inset-0 opacity-20">
+          <AbstractArt seed="contact-form" variant="nodes" />
+        </div>
+        <form id="contact-form" class="relative space-y-4 p-6 sm:p-8">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label for="name" class="mb-1.5 block text-xs font-medium text-fg-muted">Your name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+              />
+            </div>
+            <div>
+              <label for="email" class="mb-1.5 block text-xs font-medium text-fg-muted">Your email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+              />
+            </div>
+          </div>
+          <div>
+            <label for="subject" class="mb-1.5 block text-xs font-medium text-fg-muted">Subject</label>
+            <input
+              id="subject"
+              name="subject"
+              type="text"
+              required
+              class="w-full rounded-lg border border-border bg-bg px-3.5 py-2.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+            />
+          </div>
+          <div>
+            <label for="message" class="mb-1.5 block text-xs font-medium text-fg-muted">Message</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="5"
+              required
+              class="w-full resize-none rounded-lg border border-border bg-bg px-3.5 py-2.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-fg shadow-[0_4px_16px_-4px_var(--color-accent)] transition-all hover:bg-accent-hover hover:-translate-y-0.5"
+          >
+            Send Message
+            <Send class="h-4 w-4" aria-hidden="true" />
+          </button>
+          <p class="text-xs text-fg-muted">
+            Opens your email client with this message pre-filled, sent directly to {SITE.email}, no
+            data is stored or transmitted anywhere else.
+          </p>
+        </form>
+      </div>
+    </div>
+  </Container>
+</BaseLayout>
+
+<script is:inline define:vars={{ email: SITE.email }}>
+  const form = document.getElementById('contact-form');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const name = String(data.get('name') ?? '');
+    const senderEmail = String(data.get('email') ?? '');
+    const subject = String(data.get('subject') ?? '');
+    const message = String(data.get('message') ?? '');
+
+    const body = `${message}\n\nRegards,\n${name} (${senderEmail})`;
+    const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+    window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Opening your email client…' } }));
+  });
+</script>

@@ -1,0 +1,50 @@
+---
+import { Search as SearchIcon } from '@lucide/astro';
+
+interface Props {
+  placeholder?: string;
+  targetSelector: string;
+  emptyStateSelector?: string;
+  class?: string;
+}
+
+const { placeholder = 'Search...', targetSelector, emptyStateSelector, class: className = '' } = Astro.props;
+---
+
+<div class:list={['relative', className]}>
+  <SearchIcon class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-muted" aria-hidden="true" />
+  <input
+    type="search"
+    data-search-input
+    data-target={targetSelector}
+    data-empty-target={emptyStateSelector}
+    placeholder={placeholder}
+    aria-label={placeholder}
+    class="w-full rounded-full border border-border bg-surface py-3 pl-11 pr-4 text-sm text-fg placeholder:text-fg-muted focus-visible:outline-2 focus-visible:outline-offset-2"
+  />
+</div>
+
+<script>
+  document.querySelectorAll<HTMLInputElement>('[data-search-input]').forEach((input) => {
+    const targetSelector = input.dataset.target;
+    const emptySelector = input.dataset.emptyTarget;
+    if (!targetSelector) return;
+
+    input.addEventListener('input', () => {
+      const query = input.value.trim().toLowerCase();
+      const items = document.querySelectorAll<HTMLElement>(targetSelector);
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const haystack = item.dataset.search?.toLowerCase() ?? item.textContent?.toLowerCase() ?? '';
+        const matches = haystack.includes(query);
+        item.classList.toggle('hidden', !matches);
+        if (matches) visibleCount += 1;
+      });
+
+      if (emptySelector) {
+        document.querySelector(emptySelector)?.classList.toggle('hidden', visibleCount !== 0);
+      }
+    });
+  });
+</script>

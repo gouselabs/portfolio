@@ -1,0 +1,41 @@
+---
+import { Sun, Moon } from '@lucide/astro';
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  aria-label="Toggle color theme"
+  class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg-muted transition-colors hover:border-fg hover:text-fg"
+>
+  <Sun class="h-4 w-4" data-icon="sun" />
+  <Moon class="hidden h-4 w-4" data-icon="moon" />
+</button>
+
+<script>
+  function currentIsDark() {
+    const root = document.documentElement;
+    return (
+      root.getAttribute('data-theme') === 'dark' ||
+      (root.getAttribute('data-theme') !== 'light' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
+    );
+  }
+
+  function applyIconState() {
+    const isDark = currentIsDark();
+    document.querySelectorAll<HTMLElement>('[data-icon="sun"]').forEach((el) => el.classList.toggle('hidden', isDark));
+    document.querySelectorAll<HTMLElement>('[data-icon="moon"]').forEach((el) => el.classList.toggle('hidden', !isDark));
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const next = currentIsDark() ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      applyIconState();
+    });
+  });
+
+  applyIconState();
+</script>

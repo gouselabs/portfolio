@@ -1,0 +1,46 @@
+---
+import { Mail } from '@lucide/astro';
+import GithubIcon from './icons/GithubIcon.astro';
+import LinkedinIcon from './icons/LinkedinIcon.astro';
+import XIcon from './icons/XIcon.astro';
+import { SOCIAL_LINKS, SITE } from '../data/site';
+
+interface Props {
+  class?: string;
+  includeEmail?: boolean;
+}
+
+const { class: className = '', includeEmail = false } = Astro.props;
+
+const icons = { github: GithubIcon, linkedin: LinkedinIcon, twitter: XIcon } as const;
+---
+
+<div class:list={['flex items-center gap-2', className]}>
+  {
+    SOCIAL_LINKS.map((link) => {
+      const Icon = icons[link.icon as keyof typeof icons];
+      return (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={link.label}
+          class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg-muted transition-colors hover:border-fg hover:text-fg"
+        >
+          <Icon class="h-4 w-4" aria-hidden="true" />
+        </a>
+      );
+    })
+  }
+  {
+    includeEmail && (
+      <a
+        href={`mailto:${SITE.email}`}
+        aria-label="Email"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg-muted transition-colors hover:border-fg hover:text-fg"
+      >
+        <Mail class="h-4 w-4" aria-hidden="true" />
+      </a>
+    )
+  }
+</div>

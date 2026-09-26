@@ -1,0 +1,47 @@
+---
+interface Props {
+  class?: string;
+  compact?: boolean;
+}
+
+const { class: className = '', compact = false } = Astro.props;
+
+// Built as a plain string (not inline Astro markup) because the snippet's
+// literal `{` `}` characters would otherwise be parsed as Astro expressions.
+const fullLines = [
+  '<span class="text-warning">@KafkaListener</span><span class="text-fg-muted">(topics = </span><span class="text-success">&quot;orders&quot;</span><span class="text-fg-muted">)</span>',
+  '<span class="text-accent">public void</span> <span class="text-fg">onOrderEvent</span><span class="text-fg-muted">(OrderEvent event) {</span>',
+  '    <span class="text-accent">if</span> <span class="text-fg-muted">(processed.exists(event.getId())) {</span>',
+  '        <span class="text-accent">return</span><span class="text-fg-muted">;</span>',
+  '    <span class="text-fg-muted">}</span>',
+  '',
+  '    orderService.<span class="text-fg">process</span><span class="text-fg-muted">(event);</span>',
+  '    metrics.<span class="text-fg">increment</span><span class="text-fg-muted">(</span><span class="text-success">&quot;orders.processed&quot;</span><span class="text-fg-muted">);</span>',
+  '<span class="text-fg-muted">}</span>',
+];
+
+// Short, narrow lines so the compact card never needs to scroll sideways.
+const compactLines = [
+  '<span class="text-warning">@KafkaListener</span><span class="text-fg-muted">(</span><span class="text-success">&quot;orders&quot;</span><span class="text-fg-muted">)</span>',
+  '<span class="text-accent">void</span> <span class="text-fg">onEvent</span><span class="text-fg-muted">(Event e) {</span>',
+  '  <span class="text-accent">if</span> <span class="text-fg-muted">(seen(e))</span> <span class="text-accent">return</span><span class="text-fg-muted">;</span>',
+  '  process<span class="text-fg-muted">(e);</span>',
+  '<span class="text-fg-muted">}</span>',
+];
+
+const codeHtml = (compact ? compactLines : fullLines).join('\n');
+---
+
+<div class:list={['overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl', className]}>
+  <div class:list={['flex items-center gap-2 border-b border-border', compact ? 'px-3 py-2' : 'px-4 py-3']}>
+    <span class="h-2.5 w-2.5 rounded-full bg-warning/70" aria-hidden="true"></span>
+    <span class="h-2.5 w-2.5 rounded-full bg-success/70" aria-hidden="true"></span>
+    <span class="h-2.5 w-2.5 rounded-full bg-accent/70" aria-hidden="true"></span>
+    <span class:list={['ml-2 truncate font-mono text-fg-muted', compact ? 'text-[10px]' : 'text-xs']}>OrderEventListener.java</span>
+  </div>
+  <pre class:list={['leading-relaxed', compact ? 'overflow-hidden px-4 py-3 text-[11px]' : 'overflow-x-auto px-5 py-5 text-[13px]']}><code class="font-mono" set:html={codeHtml} /></pre>
+  <div class:list={['flex items-center gap-2 border-t border-border bg-accent-soft', compact ? 'px-3 py-2' : 'px-4 py-2.5']}>
+    <span class="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-accent" aria-hidden="true"></span>
+    <span class:list={['font-mono text-accent', compact ? 'text-[10px] leading-snug' : 'text-xs']}>Currently building: scalable systems &amp; developer tools</span>
+  </div>
+</div>

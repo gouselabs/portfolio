@@ -1,0 +1,119 @@
+---
+import { X, ChevronLeft, ChevronRight } from '@lucide/astro';
+import AbstractArt from './AbstractArt.astro';
+
+interface GalleryImage {
+  seed: string;
+  alt: string;
+  category?: string;
+  variant?: 'nodes' | 'circuit' | 'waves' | 'grid';
+}
+
+interface Props {
+  images: GalleryImage[];
+}
+
+const { images } = Astro.props;
+---
+
+<div
+  id="lightbox"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-bg/95 p-4 backdrop-blur-sm sm:p-10"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Photo viewer"
+>
+  <button
+    type="button"
+    id="lightbox-close"
+    aria-label="Close viewer"
+    class="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-fg hover:border-fg"
+  >
+    <X class="h-5 w-5" aria-hidden="true" />
+  </button>
+
+  <button
+    type="button"
+    id="lightbox-prev"
+    aria-label="Previous photo"
+    class="absolute left-4 top-1/2 hidden -translate-y-1/2 h-10 w-10 items-center justify-center rounded-full border border-border text-fg hover:border-fg sm:inline-flex"
+  >
+    <ChevronLeft class="h-5 w-5" aria-hidden="true" />
+  </button>
+
+  <button
+    type="button"
+    id="lightbox-next"
+    aria-label="Next photo"
+    class="absolute right-4 top-1/2 hidden -translate-y-1/2 h-10 w-10 items-center justify-center rounded-full border border-border text-fg hover:border-fg sm:inline-flex"
+  >
+    <ChevronRight class="h-5 w-5" aria-hidden="true" />
+  </button>
+
+  <div class="flex max-h-full w-full max-w-4xl flex-col items-center gap-4">
+    <div class="aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border">
+      {
+        images.map((image, i) => (
+          <div class="hidden h-full w-full" data-slide={i}>
+            <AbstractArt seed={image.seed} variant={image.variant ?? 'waves'} />
+          </div>
+        ))
+      }
+    </div>
+    <p id="lightbox-caption" class="text-center text-sm text-fg-muted"></p>
+  </div>
+</div>
+
+<script is:inline define:vars={{ captions: images.map((i) => ({ alt: i.alt, category: i.category ?? '' })) }}>
+  const lightbox = document.getElementById('lightbox');
+  const caption = document.getElementById('lightbox-caption');
+  const slides = lightbox?.querySelectorAll('[data-slide]');
+  let currentIndex = 0;
+
+  function show(index) {
+    if (!slides || slides.length === 0) return;
+    currentIndex = (index + slides.length) % slides.length;
+    slides.forEach((slide) => slide.classList.add('hidden'));
+    const el = lightbox.querySelector(`[data-slide="${currentIndex}"]`);
+    el?.classList.remove('hidden');
+    const meta = captions[currentIndex];
+    if (caption && meta) {
+      caption.textContent = meta.category ? `${meta.alt} (${meta.category})` : meta.alt;
+    }
+  }
+
+  function open(index) {
+    show(index);
+    lightbox?.classList.remove('hidden');
+    lightbox?.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
+  }
+
+  function close() {
+    lightbox?.classList.add('hidden');
+    lightbox?.classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
+  }
+
+  document.querySelectorAll('[data-lightbox-trigger]').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const index = Number(trigger.getAttribute('data-index') ?? '0');
+      open(index);
+    });
+  });
+
+  document.getElementById('lightbox-close')?.addEventListener('click', close);
+  document.getElementById('lightbox-prev')?.addEventListener('click', () => show(currentIndex - 1));
+  document.getElementById('lightbox-next')?.addEventListener('click', () => show(currentIndex + 1));
+
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) close();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (lightbox?.classList.contains('hidden')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(currentIndex - 1);
+    if (e.key === 'ArrowRight') show(currentIndex + 1);
+  });
+</script>

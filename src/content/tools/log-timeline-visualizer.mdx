@@ -1,0 +1,25 @@
+---
+title: "Log Timeline Visualizer"
+summary: "Paste raw application logs and get an organized, chronological timeline, with flows grouped, errors flagged and slow gaps highlighted."
+problem: "During an incident, hunting through thousands of interleaved log lines to work out what happened, in what order, is slow and error-prone."
+features:
+  - "Parses ISO 8601, syslog, US-date and Unix-epoch timestamps"
+  - "Detects log levels (TRACE to FATAL) with color-coded highlighting"
+  - "Groups related lines into flows by request/trace ID or worker-thread session"
+  - "Flags slow gaps between events"
+  - "Collapses stack traces for cleaner error visibility"
+  - "100% client-side, so your logs never leave the browser"
+howItWorks: "Paste plain-text or JSON logs (even mixed formats). The parser auto-detects timestamps, levels and correlation IDs, groups lines into request flows, and renders a chronological timeline with time deltas between events."
+techStack: ["Astro", "TypeScript", "Client-side"]
+category: "Developer Tools"
+status: "Live"
+icon: "activity"
+coverImage: "waves"
+coverAlt: "Abstract waveform graphic representing a timeline"
+toolUrl: "https://logtimeline.gouselabs.com/"
+repoUrl: "https://github.com/gouselabs/log-time-visualizer"
+featured: true
+order: 1
+publishDate: 2026-01-20
+placeholder: false
+---

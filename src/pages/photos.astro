@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import ImageCard from '../components/ImageCard.astro';
+import Modal from '../components/Modal.astro';
+import PlaceholderNotice from '../components/PlaceholderNotice.astro';
+
+const categories = ['Portraits', 'Travel', 'Nature', 'Architecture', 'Experimental'] as const;
+const variants = ['nodes', 'circuit', 'waves', 'grid'] as const;
+
+const gallery = Array.from({ length: 10 }, (_, i) => ({
+  seed: `photo-${i}`,
+  alt: 'Placeholder image, replace with real photography',
+  category: categories[i % categories.length],
+  variant: variants[i % variants.length],
+}));
+---
+
+<BaseLayout title="Photos" description="A visual personal space with photography across portraits, travel, nature, architecture, and experimental work.">
+  <Container class="py-16 sm:py-24">
+    <div class="max-w-2xl">
+      <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Photos</span>
+      <h1 class="mt-4 text-balance font-display text-4xl font-medium sm:text-5xl">Photography</h1>
+      <p class="mt-4 text-fg-muted">A personal visual space. Replace the placeholder tiles below with real photography.</p>
+    </div>
+
+    <PlaceholderNotice class="mt-8" />
+
+    <div class="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
+      {
+        gallery.map((image, i) => (
+          <ImageCard seed={image.seed} alt={image.alt} category={image.category} variant={image.variant} index={i} class="break-inside-avoid" />
+        ))
+      }
+    </div>
+  </Container>
+
+  <Modal images={gallery} />
+</BaseLayout>

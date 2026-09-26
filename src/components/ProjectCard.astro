@@ -1,0 +1,77 @@
+---
+import { ArrowUpRight } from '@lucide/astro';
+import { Image } from 'astro:assets';
+import GithubIcon from './icons/GithubIcon.astro';
+import AbstractArt from './AbstractArt.astro';
+import Badge from './Badge.astro';
+import Tag from './Tag.astro';
+import { statusBadgeVariant } from '../lib/format';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  size?: 'large' | 'default';
+}
+
+const { project, size = 'default' } = Astro.props;
+const { data, id } = project;
+---
+
+<article
+  class:list={[
+    'hover-glow group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface',
+    size === 'large' ? 'lg:col-span-2 lg:flex-row' : '',
+  ]}
+>
+  <a href={`/projects/${id}`} class="absolute inset-0 z-10" aria-label={`View project: ${data.title}`}></a>
+
+  <div class:list={['aspect-video overflow-hidden', size === 'large' ? 'lg:aspect-auto lg:w-1/2' : '']}>
+    {
+      data.screenshot ? (
+        <Image
+          src={data.screenshot}
+          alt={data.coverAlt}
+          width={size === 'large' ? 960 : 720}
+          class="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+        />
+      ) : (
+        <AbstractArt seed={id} variant="nodes" class="transition-transform duration-500 group-hover:scale-105" />
+      )
+    }
+  </div>
+
+  <div class="flex flex-1 flex-col gap-3 p-6">
+    <div class="flex items-center gap-2">
+      <Badge variant={statusBadgeVariant(data.status)}>{data.status}</Badge>
+      <Badge variant="accent">{data.category}</Badge>
+    </div>
+
+    <h3 class="font-display text-xl font-medium">{data.title}</h3>
+    <p class="text-sm text-fg-muted">{data.summary}</p>
+
+    <div class="mt-auto flex flex-wrap gap-2 pt-3">
+      {data.techStack.slice(0, 4).map((tech) => <Tag>{tech}</Tag>)}
+    </div>
+
+    <div class="relative z-20 mt-2 flex items-center gap-4 text-sm">
+      <span class="inline-flex items-center gap-1 font-medium text-fg transition-colors group-hover:text-accent">
+        View project
+        <ArrowUpRight class="h-3.5 w-3.5" aria-hidden="true" />
+      </span>
+      {
+        data.githubUrl && (
+          <a
+            href={data.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1 text-fg-muted hover:text-fg"
+            aria-label="View source on GitHub"
+          >
+            <GithubIcon class="h-3.5 w-3.5" aria-hidden="true" />
+            Source
+          </a>
+        )
+      }
+    </div>
+  </div>
+</article>

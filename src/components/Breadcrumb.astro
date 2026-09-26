@@ -1,0 +1,46 @@
+---
+import { ChevronRight } from '@lucide/astro';
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+  class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.label,
+    ...(item.href ? { item: item.href } : {}),
+  })),
+};
+---
+
+<nav aria-label="Breadcrumb" class:list={['flex items-center gap-1.5 font-mono text-xs text-fg-muted', className]}>
+  {
+    items.map((item, i) => (
+      <span class="flex items-center gap-1.5">
+        {item.href ? (
+          <a href={item.href} class="transition-colors hover:text-fg">
+            {item.label}
+          </a>
+        ) : (
+          <span class="text-fg" aria-current="page">
+            {item.label}
+          </span>
+        )}
+        {i < items.length - 1 && <ChevronRight class="h-3 w-3" aria-hidden="true" />}
+      </span>
+    ))
+  }
+</nav>
+<script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />

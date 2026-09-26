@@ -1,0 +1,149 @@
+---
+import { ExternalLink } from '@lucide/astro';
+import { Image } from 'astro:assets';
+import GithubIcon from '../components/icons/GithubIcon.astro';
+import BaseLayout from './BaseLayout.astro';
+import Container from '../components/Container.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Badge from '../components/Badge.astro';
+import Tag from '../components/Tag.astro';
+import Button from '../components/Button.astro';
+import AbstractArt from '../components/AbstractArt.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import CodeBlockEnhancer from '../components/CodeBlockEnhancer.astro';
+import PlaceholderNotice from '../components/PlaceholderNotice.astro';
+import { formatDate, statusBadgeVariant } from '../lib/format';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  related: CollectionEntry<'projects'>[];
+}
+
+const { project, related } = Astro.props;
+const { data, id } = project;
+---
+
+<BaseLayout title={data.title} description={data.summary} type="article" publishDate={data.publishDate}>
+  <article>
+    <div class="aspect-[21/9] w-full overflow-hidden">
+      {
+        data.screenshot ? (
+          <Image src={data.screenshot} alt={data.coverAlt} width={1600} loading="eager" fetchpriority="high" class="h-full w-full object-cover object-top" />
+        ) : (
+          <AbstractArt seed={id} variant="nodes" />
+        )
+      }
+    </div>
+
+    <Container narrow class="py-10 sm:py-14">
+      <Breadcrumb items={[{ label: 'Projects', href: '/projects' }, { label: data.title }]} />
+
+      {data.placeholder && <PlaceholderNotice class="mt-6" />}
+
+      <div class="mt-6 flex flex-wrap items-center gap-2">
+        <Badge variant={statusBadgeVariant(data.status)}>{data.status}</Badge>
+        <Badge variant="accent">{data.category}</Badge>
+      </div>
+
+      <h1 class="mt-4 text-balance text-3xl font-medium sm:text-4xl lg:text-5xl">{data.title}</h1>
+      <p class="mt-4 text-lg text-fg-muted">{data.summary}</p>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        {data.githubUrl && <Button href={data.githubUrl} variant="secondary"><GithubIcon class="h-4 w-4" aria-hidden="true" />Source code</Button>}
+        {data.liveUrl && <Button href={data.liveUrl}>Live demo<ExternalLink class="h-4 w-4" aria-hidden="true" /></Button>}
+      </div>
+
+      <div class="mt-10 grid gap-8 sm:grid-cols-2">
+        <section>
+          <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Problem</h2>
+          <p class="mt-3 text-fg-muted">{data.problem}</p>
+        </section>
+        <section>
+          <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Why I built it</h2>
+          <p class="mt-3 text-fg-muted">{data.whyBuilt}</p>
+        </section>
+        <section>
+          <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Solution</h2>
+          <p class="mt-3 text-fg-muted">{data.solution}</p>
+        </section>
+        {
+          data.architecture && (
+            <section>
+              <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Architecture</h2>
+              <p class="mt-3 text-fg-muted">{data.architecture}</p>
+            </section>
+          )
+        }
+      </div>
+
+      {
+        data.gallery.length > 0 && (
+          <section class="mt-10">
+            <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Screenshots</h2>
+            <div class="mt-4 grid gap-6">
+              {data.gallery.map((shot) => (
+                <figure>
+                  <a href={shot.src.src} target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-2xl border border-border bg-surface">
+                    <Image src={shot.src} alt={shot.alt} width={1200} class="h-auto w-full" />
+                  </a>
+                  {shot.caption && <figcaption class="mt-2 text-sm text-fg-muted">{shot.caption}</figcaption>}
+                </figure>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <div class="prose prose-neutral mt-10 max-w-none">
+        <slot />
+      </div>
+
+      {
+        (data.challenges || data.results) && (
+          <div class="mt-10 grid gap-8 sm:grid-cols-2">
+            {data.challenges && (
+              <section>
+                <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Challenges</h2>
+                <p class="mt-3 text-fg-muted">{data.challenges}</p>
+              </section>
+            )}
+            {data.results && (
+              <section>
+                <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Results &amp; impact</h2>
+                <p class="mt-3 text-fg-muted">{data.results}</p>
+              </section>
+            )}
+          </div>
+        )
+      }
+
+      <div class="mt-10 border-t border-border pt-8">
+        <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Tech stack</h2>
+        <div class="mt-3 flex flex-wrap gap-2">
+          {data.techStack.map((tech) => <Tag>{tech}</Tag>)}
+        </div>
+      </div>
+
+      <p class="mt-8 font-mono text-xs text-fg-muted">Published {formatDate(data.publishDate)}</p>
+    </Container>
+
+    {
+      related.length > 0 && (
+        <div class="border-t border-border py-16">
+          <Container>
+            <SectionHeading eyebrow="More work" title="Related projects" />
+            <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((p) => (
+                <ProjectCard project={p} />
+              ))}
+            </div>
+          </Container>
+        </div>
+      )
+    }
+  </article>
+
+  <CodeBlockEnhancer />
+</BaseLayout>

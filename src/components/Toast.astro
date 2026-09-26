@@ -1,0 +1,36 @@
+---
+// Lightweight global toast. Trigger from any inline script with:
+//   window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Copied!' } }))
+---
+
+<div
+  id="toast"
+  role="status"
+  aria-live="polite"
+  class="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center opacity-0 transition-opacity duration-200"
+>
+  <div class="rounded-full border border-border bg-fg px-4 py-2 text-sm font-medium text-bg shadow-lg">
+    <span id="toast-message"></span>
+  </div>
+</div>
+
+<script>
+  let hideTimeout: ReturnType<typeof setTimeout>;
+
+  window.addEventListener('toast', (event) => {
+    const detail = (event as CustomEvent<{ message: string }>).detail;
+    const toast = document.getElementById('toast');
+    const message = document.getElementById('toast-message');
+    if (!toast || !message) return;
+
+    message.textContent = detail.message;
+    toast.classList.remove('opacity-0');
+    toast.classList.add('opacity-100');
+
+    clearTimeout(hideTimeout);
+    hideTimeout = setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0');
+    }, 2000);
+  });
+</script>

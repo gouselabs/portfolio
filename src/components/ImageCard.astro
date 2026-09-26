@@ -1,0 +1,32 @@
+---
+import AbstractArt from './AbstractArt.astro';
+
+interface Props {
+  seed: string;
+  alt: string;
+  category?: string;
+  variant?: 'nodes' | 'circuit' | 'waves' | 'grid';
+  class?: string;
+  index: number;
+}
+
+const { seed, alt, category, variant = 'waves', class: className = '', index } = Astro.props;
+---
+
+<button
+  type="button"
+  data-lightbox-trigger
+  data-index={index}
+  data-alt={alt}
+  data-category={category}
+  class:list={['group relative block w-full overflow-hidden rounded-xl border border-border text-left', className]}
+>
+  <AbstractArt seed={seed} variant={variant} class="transition-transform duration-500 group-hover:scale-105" />
+  {
+    category && (
+      <span class="absolute bottom-2 left-2 rounded-full bg-bg/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-fg-muted backdrop-blur">
+        {category}
+      </span>
+    )
+  }
+</button>

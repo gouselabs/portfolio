@@ -1,0 +1,311 @@
+---
+import { getCollection } from 'astro:content';
+import * as icons from '@lucide/astro';
+import { Download, Briefcase } from '@lucide/astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ToolCard from '../components/ToolCard.astro';
+import BlogCard from '../components/BlogCard.astro';
+import ResourceCard from '../components/ResourceCard.astro';
+import Badge from '../components/Badge.astro';
+import StatGrid from '../components/StatGrid.astro';
+import SkillGroupGrid from '../components/SkillGroupGrid.astro';
+import CodeCard from '../components/CodeCard.astro';
+import ProfilePhoto from '../components/ProfilePhoto.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import { ENGINEERING_FOCUS, SITE } from '../data/site';
+import { HERO_STATS, EXPERIENCE_STATS, EXPERIENCE, CERTIFICATIONS, FOCUS_AREAS, RESUME_PDF_URL } from '../data/resume';
+
+const allProjects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const featuredProjects = allProjects.filter((p) => p.data.featured).slice(0, 4);
+
+const allTools = (await getCollection('tools')).sort((a, b) => a.data.order - b.data.order);
+const featuredTools = allTools.slice(0, 4);
+
+const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+  .slice(0, 3);
+
+const resources = (await getCollection('resources')).slice(0, 3);
+
+function toPascalCase(kebab: string) {
+  return kebab
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+const iconMap = icons as unknown as Record<string, typeof icons.Wrench>;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.fullName,
+  url: SITE.url,
+  jobTitle: 'Backend Software Engineer',
+  description: SITE.description,
+};
+---
+
+<BaseLayout title={SITE.name} description={SITE.description} structuredData={structuredData}>
+  <!-- Hero -->
+  <section class="relative border-b border-border">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div
+        class="absolute -top-40 right-0 h-[32rem] w-[32rem] rounded-full opacity-40 blur-3xl"
+        style="background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%)"
+      >
+      </div>
+    </div>
+
+    <Container class="relative grid gap-12 py-20 sm:py-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+      <div class="fade-in-up">
+        <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent">
+          <span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
+          Backend Software Engineer
+        </span>
+        <h1 class="mt-5 text-balance font-display text-4xl font-medium leading-[1.05] sm:text-6xl">
+          Hi, I'm <span class="text-accent">{SITE.fullName}</span>
+        </h1>
+        <p class="mt-4 text-balance text-xl text-fg-muted">
+          I build scalable backend systems and share engineering knowledge.
+        </p>
+        <p class="mt-4 max-w-xl text-balance text-fg-muted">
+          4+ years of experience designing and building distributed systems using Java, Spring Boot,
+          Microservices, Kafka, and AWS, with a growing focus on developer tools and applied AI.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <Button href="/projects" size="lg" showArrow>View My Projects</Button>
+          <Button href="/tools" size="lg" variant="secondary">Explore My Tools</Button>
+          <Button href={RESUME_PDF_URL} size="lg" variant="secondary">
+            <Download class="h-4 w-4" aria-hidden="true" />
+            Download Resume
+          </Button>
+        </div>
+        <SocialLinks class="mt-8" includeEmail />
+      </div>
+
+      <div class="relative hidden lg:block" data-reveal>
+        <div class="relative mx-auto mb-16 max-w-md">
+          <div class="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-accent/20 blur-3xl" aria-hidden="true"></div>
+          <div class="relative aspect-square overflow-hidden rounded-3xl border border-border shadow-2xl">
+            <ProfilePhoto size={640} priority />
+          </div>
+          <div class="absolute -bottom-16 -left-10 w-56">
+            <CodeCard compact />
+          </div>
+        </div>
+      </div>
+    </Container>
+
+    <Container class="relative pb-16">
+      <StatGrid stats={HERO_STATS} columns={4} />
+    </Container>
+  </section>
+
+  <!-- Featured Work -->
+  <section class="border-b border-border py-20">
+    <Container>
+      <div data-reveal class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHeading eyebrow="Featured work" title="Things I've built" description="A selection of projects that solve real problems end to end." />
+        <Button href="/projects" variant="ghost" showArrow>All projects</Button>
+      </div>
+      <div data-reveal-group class="mt-12 grid gap-6 lg:grid-cols-2">
+        {featuredProjects.map((project, i) => <ProjectCard project={project} size={i === 0 ? 'large' : 'default'} />)}
+      </div>
+    </Container>
+  </section>
+
+  <!-- Experience -->
+  <section class="border-b border-border py-20">
+    <Container>
+      <div data-reveal class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHeading eyebrow="Experience" title="Where I've worked" description="Backend roles building financial and trading platforms at scale." />
+        <Button href="/resume" variant="ghost" showArrow>Full resume</Button>
+      </div>
+
+      <div class="mt-12 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+        <div data-reveal-group class="space-y-10 border-l-2 border-accent/30 pl-6">
+          {
+            EXPERIENCE.map((role) => (
+              <div class="relative">
+                <span class="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-soft text-accent">
+                  <Briefcase class="h-2.5 w-2.5" aria-hidden="true" />
+                </span>
+                <p class="font-mono text-xs text-fg-muted">{role.start} – {role.end}</p>
+                <h3 class="mt-1 font-display text-lg font-medium">{role.title}</h3>
+                <p class="text-sm text-accent">{role.company} · {role.location}</p>
+                <ul class="mt-3 space-y-2">
+                  {role.bullets.slice(0, 3).map((bullet) => (
+                    <li class="flex gap-2 text-sm text-fg-muted">
+                      <span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-fg-muted" aria-hidden="true" />
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+
+        <div data-reveal class="space-y-6">
+          <div class="grid grid-cols-2 gap-4">
+            {
+              EXPERIENCE_STATS.map((stat) => {
+                const Icon = iconMap[toPascalCase(stat.icon)] ?? icons.Zap;
+                return (
+                  <div class="hover-glow rounded-2xl border border-border bg-surface p-5">
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft text-accent">
+                      <Icon class="h-4 w-4" aria-hidden="true" />
+                    </span>
+                    <p class="mt-3 font-display text-xl font-medium text-accent">{stat.value}</p>
+                    <p class="mt-1 text-xs text-fg-muted">{stat.label}</p>
+                  </div>
+                );
+              })
+            }
+          </div>
+
+          <div class="rounded-2xl border border-border bg-surface p-5">
+            <p class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Technologies I work with</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {ENGINEERING_FOCUS.map((tag) => <Badge variant="accent">{tag}</Badge>)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Tech Arsenal -->
+  <section class="border-b border-border py-20">
+    <Container>
+      <div data-reveal>
+        <SectionHeading eyebrow="My tech arsenal" title="Technologies I use" description="The stack I reach for when building real systems, grouped the way I actually think about it." />
+      </div>
+      <SkillGroupGrid compact class="mt-12" />
+    </Container>
+  </section>
+
+  <!-- Tools -->
+  <section class="border-b border-border py-20">
+    <Container>
+      <div data-reveal class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHeading eyebrow="Tools" title="Tools I build" description="Small, useful software designed to solve specific problems." />
+        <Button href="/tools" variant="ghost" showArrow>Explore all tools</Button>
+      </div>
+      <div data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        {featuredTools.map((tool) => <ToolCard tool={tool} />)}
+      </div>
+    </Container>
+  </section>
+
+  <!-- Latest writing (hidden until the first post exists) -->
+  {
+    latestPosts.length > 0 && (
+      <section class="border-b border-border py-20">
+        <Container>
+          <div data-reveal class="flex flex-wrap items-end justify-between gap-6">
+            <SectionHeading eyebrow="Writing" title="Latest from the blog" description="Notes on backend engineering, systems, and things I'm building." />
+            <Button href="/blog" variant="ghost" showArrow>Read the blog</Button>
+          </div>
+          <div data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {latestPosts.map((post) => <BlogCard post={post} />)}
+          </div>
+        </Container>
+      </section>
+    )
+  }
+
+  <!-- Certifications -->
+  <section class="border-b border-border py-20">
+    <Container>
+      <div data-reveal>
+        <SectionHeading eyebrow="Credentials" title="Certifications & awards" />
+      </div>
+      <div data-reveal-group class="mt-10 grid gap-4 sm:grid-cols-3">
+        {
+          CERTIFICATIONS.map((cert) => {
+            const Icon = iconMap[toPascalCase(cert.icon)] ?? icons.Award;
+            return (
+              <div class="hover-glow flex items-start gap-3 rounded-2xl border border-border bg-surface p-5">
+                <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+                  <Icon class="h-4 w-4" aria-hidden="true" />
+                </span>
+                <div>
+                  <p class="font-medium">{cert.name}</p>
+                  <p class="mt-0.5 text-sm text-fg-muted">{cert.issuer}</p>
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
+    </Container>
+  </section>
+
+  <!-- Resources (hidden until a resource exists) -->
+  {
+    resources.length > 0 && (
+      <section class="border-b border-border py-20">
+        <Container>
+          <div data-reveal class="flex flex-wrap items-end justify-between gap-6">
+            <SectionHeading eyebrow="Resources" title="Free resources" description="Cheat sheets, guides, and templates worth keeping handy." />
+            <Button href="/resources" variant="ghost" showArrow>Browse resources</Button>
+          </div>
+          <div data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {resources.map((resource) => <ResourceCard resource={resource} />)}
+          </div>
+        </Container>
+      </section>
+    )
+  }
+
+  <!-- Currently focused on -->
+  <section class="border-b border-border py-20">
+    <Container>
+      <div data-reveal class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHeading eyebrow="Currently focused on" title="What's on my mind lately" />
+        <Button href="/about" variant="ghost" showArrow>More about me</Button>
+      </div>
+      <div data-reveal-group class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          FOCUS_AREAS.map((item) => {
+            const Icon = iconMap[toPascalCase(item.icon)] ?? icons.Sparkles;
+            return (
+              <div class="hover-glow flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3">
+                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+                  <Icon class="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span class="text-sm font-medium">{item.label}</span>
+              </div>
+            );
+          })
+        }
+      </div>
+    </Container>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="relative overflow-hidden py-24">
+    <div
+      class="pointer-events-none absolute left-1/2 top-0 h-96 w-[48rem] -translate-x-1/2 rounded-full opacity-30 blur-3xl"
+      style="background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%)"
+      aria-hidden="true"
+    >
+    </div>
+    <Container narrow data-reveal class="relative text-center">
+      <h2 class="text-balance font-display text-3xl font-medium sm:text-5xl">Have an idea worth building?</h2>
+      <p class="mx-auto mt-4 max-w-lg text-fg-muted">
+        I'm always interested in hard backend problems and useful tools worth building. Reach out or take
+        a look at what I've already shipped.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <Button href="/contact" size="lg" showArrow>Get in touch</Button>
+        <Button href="/projects" size="lg" variant="secondary">Explore my work</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

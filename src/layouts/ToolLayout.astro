@@ -1,0 +1,129 @@
+---
+import { Check, ExternalLink, BookOpen } from '@lucide/astro';
+import * as icons from '@lucide/astro';
+import BaseLayout from './BaseLayout.astro';
+import Container from '../components/Container.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Badge from '../components/Badge.astro';
+import Tag from '../components/Tag.astro';
+import Button from '../components/Button.astro';
+import CodeBlockEnhancer from '../components/CodeBlockEnhancer.astro';
+import PlaceholderNotice from '../components/PlaceholderNotice.astro';
+import GithubIcon from '../components/icons/GithubIcon.astro';
+import { statusBadgeVariant } from '../lib/format';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  tool: CollectionEntry<'tools'>;
+  relatedPost?: CollectionEntry<'blog'>;
+}
+
+const { tool, relatedPost } = Astro.props;
+const { data } = tool;
+
+function toPascalCase(kebab: string) {
+  return kebab
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+
+const iconMap = icons as unknown as Record<string, typeof icons.Wrench>;
+const Icon = iconMap[toPascalCase(data.icon)] ?? icons.Wrench;
+const isExtension = data.toolUrl?.includes('marketplace.visualstudio.com') ?? false;
+---
+
+<BaseLayout title={data.title} description={data.summary} type="article" publishDate={data.publishDate}>
+  <article>
+    <Container narrow class="py-10 sm:py-14">
+      <Breadcrumb items={[{ label: 'Tools', href: '/tools' }, { label: data.title }]} />
+
+      {data.placeholder && <PlaceholderNotice class="mt-6" />}
+
+      <div class="mt-6 flex items-start justify-between gap-4">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-accent">
+          <Icon class="h-6 w-6" aria-hidden="true" />
+        </div>
+        <Badge variant={statusBadgeVariant(data.status)}>{data.status}</Badge>
+      </div>
+
+      <h1 class="mt-6 text-balance text-3xl font-medium sm:text-4xl lg:text-5xl">{data.title}</h1>
+      <p class="mt-4 text-lg text-fg-muted">{data.summary}</p>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        {
+          data.toolUrl ? (
+            <Button href={data.toolUrl}>
+              {isExtension ? 'Install extension' : 'Open tool'}
+              <ExternalLink class="h-4 w-4" aria-hidden="true" />
+            </Button>
+          ) : (
+            <Button disabled>Tool preview coming soon</Button>
+          )
+        }
+        {
+          data.repoUrl && (
+            <Button href={data.repoUrl} variant="secondary">
+              <GithubIcon class="h-4 w-4" aria-hidden="true" />
+              Source code
+            </Button>
+          )
+        }
+        {
+          relatedPost && (
+            <Button href={`/blog/${relatedPost.id}`} variant="secondary">
+              <BookOpen class="h-4 w-4" aria-hidden="true" />
+              Read the write-up
+            </Button>
+          )
+        }
+      </div>
+
+      <div class="mt-10">
+        <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Problem it solves</h2>
+        <p class="mt-3 text-fg-muted">{data.problem}</p>
+      </div>
+
+      <div class="mt-10">
+        <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Features</h2>
+        <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+          {
+            data.features.map((feature) => (
+              <li class="flex items-start gap-2 text-sm text-fg-muted">
+                <Check class="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                {feature}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="mt-10">
+        <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">How it works</h2>
+        <p class="mt-3 text-fg-muted">{data.howItWorks}</p>
+      </div>
+
+      {
+        data.example && (
+          <div class="mt-10">
+            <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Example</h2>
+            <p class="mt-3 text-fg-muted">{data.example}</p>
+          </div>
+        )
+      }
+
+      <div class="prose prose-neutral mt-10 max-w-none">
+        <slot />
+      </div>
+
+      <div class="mt-10 border-t border-border pt-8">
+        <h2 class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Technology</h2>
+        <div class="mt-3 flex flex-wrap gap-2">
+          {data.techStack.map((tech) => <Tag>{tech}</Tag>)}
+        </div>
+      </div>
+    </Container>
+  </article>
+
+  <CodeBlockEnhancer />
+</BaseLayout>

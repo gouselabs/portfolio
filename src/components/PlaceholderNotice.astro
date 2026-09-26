@@ -1,0 +1,21 @@
+---
+import { TriangleAlert } from '@lucide/astro';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div
+  class:list={[
+    'flex items-start gap-3 rounded-xl border border-dashed border-accent/50 bg-accent-soft px-4 py-3 text-sm text-fg',
+    className,
+  ]}
+>
+  <TriangleAlert class="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+  <p>
+    <strong class="font-medium">Placeholder content.</strong> This entry is sample data for layout purposes. Replace it with real details before launch.
+  </p>
+</div>

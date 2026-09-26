@@ -1,0 +1,264 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/jetbrains-mono";
+
+/* ---------------------------------------------------------------- */
+/* Design tokens                                                     */
+/* Light is the default; dark applies via [data-theme="dark"] or     */
+/* prefers-color-scheme when no explicit choice has been made.       */
+/* ---------------------------------------------------------------- */
+
+:root {
+  --color-bg: #faf9f6;
+  --color-surface: #f1efe9;
+  --color-surface-hover: #e9e6de;
+  --color-border: #e2ded4;
+  --color-fg: #17161a;
+  --color-fg-muted: #5c5a63;
+  --color-accent: #2f6fef;
+  --color-accent-hover: #1d54c9;
+  --color-accent-fg: #ffffff;
+  --color-accent-soft: #2f6fef14;
+  --color-success: #15803d;
+  --color-success-soft: #15803d16;
+  --color-warning: #b45309;
+  --color-warning-soft: #b4530916;
+
+  --shadow-color: 20 14% 10%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0b0b0d;
+    --color-surface: #17171b;
+    --color-surface-hover: #1f1f24;
+    --color-border: #2a2a30;
+    --color-fg: #f3f2ee;
+    --color-fg-muted: #9c9ba3;
+    --color-accent: #6a9dff;
+    --color-accent-hover: #8ab2ff;
+    --color-accent-fg: #05070e;
+    --color-accent-soft: #6a9dff1f;
+    --color-success: #4ade80;
+    --color-success-soft: #4ade8022;
+    --color-warning: #fbbf24;
+    --color-warning-soft: #fbbf2422;
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0b0b0d;
+  --color-surface: #17171b;
+  --color-surface-hover: #1f1f24;
+  --color-border: #2a2a30;
+  --color-fg: #f3f2ee;
+  --color-fg-muted: #9c9ba3;
+  --color-accent: #6a9dff;
+  --color-accent-hover: #8ab2ff;
+  --color-accent-fg: #05070e;
+  --color-accent-soft: #6a9dff1f;
+  --color-success: #4ade80;
+  --color-success-soft: #4ade8022;
+  --color-warning: #fbbf24;
+  --color-warning-soft: #fbbf2422;
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-border: var(--color-border);
+  --color-fg: var(--color-fg);
+  --color-fg-muted: var(--color-fg-muted);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-fg: var(--color-accent-fg);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-success: var(--color-success);
+  --color-success-soft: var(--color-success-soft);
+  --color-warning: var(--color-warning);
+  --color-warning-soft: var(--color-warning-soft);
+
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk Variable", "Inter Variable", ui-sans-serif, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --container-page: 1280px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    color-scheme: light dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  code, kbd, samp, pre {
+    font-family: var(--font-mono);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-soft);
+    color: var(--color-fg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer base {
+  .prose {
+    --tw-prose-body: var(--color-fg-muted);
+    --tw-prose-headings: var(--color-fg);
+    --tw-prose-lead: var(--color-fg-muted);
+    --tw-prose-links: var(--color-accent);
+    --tw-prose-bold: var(--color-fg);
+    --tw-prose-counters: var(--color-fg-muted);
+    --tw-prose-bullets: var(--color-border);
+    --tw-prose-hr: var(--color-border);
+    --tw-prose-quotes: var(--color-fg);
+    --tw-prose-quote-borders: var(--color-accent);
+    --tw-prose-captions: var(--color-fg-muted);
+    --tw-prose-code: var(--color-fg);
+    --tw-prose-pre-code: var(--color-fg);
+    --tw-prose-pre-bg: var(--color-surface);
+    --tw-prose-th-borders: var(--color-border);
+    --tw-prose-td-borders: var(--color-border);
+    max-width: none;
+  }
+
+  .prose a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .prose pre {
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+  }
+
+  .prose code::before,
+  .prose code::after {
+    content: none;
+  }
+
+  .prose :not(pre) > code {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    padding: 0.15em 0.4em;
+    font-weight: 400;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 0 1px var(--color-accent), 0 8px 24px -8px var(--color-accent-soft);
+  }
+
+  .hover-glow {
+    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-accent) 45%, transparent), 0 16px 32px -16px color-mix(in oklab, var(--color-accent) 55%, transparent);
+    transform: translateY(-2px);
+  }
+
+  .fade-in-up {
+    animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Scroll-reveal: elements start hidden and animate in once, the first
+     time they cross into the viewport (see reveal.ts). Staggered children
+     use [data-reveal-group] > * for an automatic per-item delay. */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+
+  [data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  [data-reveal-group] > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-reveal-group].is-revealed > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  [data-reveal-group].is-revealed > *:nth-child(1) { transition-delay: 0ms; }
+  [data-reveal-group].is-revealed > *:nth-child(2) { transition-delay: 80ms; }
+  [data-reveal-group].is-revealed > *:nth-child(3) { transition-delay: 160ms; }
+  [data-reveal-group].is-revealed > *:nth-child(4) { transition-delay: 240ms; }
+  [data-reveal-group].is-revealed > *:nth-child(5) { transition-delay: 320ms; }
+  [data-reveal-group].is-revealed > *:nth-child(6) { transition-delay: 400ms; }
+  [data-reveal-group].is-revealed > *:nth-child(n + 7) { transition-delay: 480ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal],
+    [data-reveal-group] > * {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+}

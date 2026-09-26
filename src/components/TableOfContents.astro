@@ -1,0 +1,49 @@
+---
+// Builds itself from the rendered .prose headings client-side, so it never
+// drifts out of sync with the actual article content.
+---
+
+<nav aria-label="Table of contents" class="hidden lg:block">
+  <p class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">On this page</p>
+  <ul id="toc-list" class="mt-4 space-y-2 border-l border-border text-sm"></ul>
+</nav>
+
+<script>
+  const list = document.getElementById('toc-list');
+  const headings = Array.from(document.querySelectorAll<HTMLHeadingElement>('.prose h2, .prose h3'));
+
+  if (list && headings.length > 0) {
+    headings.forEach((heading, i) => {
+      if (!heading.id) heading.id = `section-${i}`;
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = `#${heading.id}`;
+      a.textContent = heading.textContent;
+      a.dataset.tocLink = heading.id;
+      a.className =
+        (heading.tagName === 'H3' ? 'pl-7' : 'pl-4') +
+        ' -ml-px block border-l-2 border-transparent py-1 text-fg-muted transition-colors hover:text-fg';
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+
+    const links = list.querySelectorAll<HTMLAnchorElement>('a');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const link = list.querySelector<HTMLAnchorElement>(`[data-toc-link="${entry.target.id}"]`);
+          if (!link) return;
+          if (entry.isIntersecting) {
+            links.forEach((l) => l.classList.remove('border-accent', 'text-fg'));
+            link.classList.add('border-accent', 'text-fg');
+          }
+        });
+      },
+      { rootMargin: '-10% 0px -70% 0px' }
+    );
+
+    headings.forEach((h) => observer.observe(h));
+  } else {
+    list?.closest('nav')?.classList.add('hidden');
+  }
+</script>

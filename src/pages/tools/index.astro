@@ -7,7 +7,11 @@ import ToolCard from '../../components/ToolCard.astro';
 const tools = (await getCollection('tools')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<BaseLayout title="Tools" description="Small, useful software designed to solve specific problems.">
+<BaseLayout
+  title="Tools"
+  description="Small, useful software designed to solve specific problems."
+  keywords={['developer tools', 'JD Decoder', 'Ext Decoder', 'Log Timeline Visualizer', 'CodeKami', 'free online tools']}
+>
   <Container class="py-16 sm:py-24">
     <div class="max-w-2xl">
       <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Tools</span>

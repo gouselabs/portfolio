@@ -9,7 +9,7 @@ export const SITE = {
   tagline: 'Build. Ship. Learn. Repeat.',
   description:
     'Backend software engineer building low-latency systems, event-driven microservices, and useful developer tools. Java, Spring Boot, Kafka, AI.',
-  url: 'https://gouselabs.dev', // TODO: replace with the real production domain
+  url: 'https://gouselabs.com',
   email: 'gouseshaikh1999@gmail.com',
   phone: '+91 95941 98505',
   location: 'Mumbai, India',
@@ -72,3 +72,18 @@ export const ENGINEERING_FOCUS = [
 ] as const;
 
 export const FOOTER_QUOTE = 'Built with curiosity, code and too much coffee.';
+
+// Sitewide default <meta name="keywords">. Individual pages extend this
+// with more specific terms via the `keywords` prop on BaseLayout.
+export const SITE_KEYWORDS = [
+  'Gouse Shaikh',
+  'backend software engineer',
+  'Java developer',
+  'Spring Boot developer',
+  'Kafka engineer',
+  'microservices',
+  'distributed systems',
+  'developer tools',
+  'software engineer portfolio',
+  'Mumbai software engineer',
+] as const;

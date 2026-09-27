@@ -35,6 +35,8 @@ const structuredData = {
   dateModified: (data.updatedDate ?? data.publishDate).toISOString(),
   author: { '@type': 'Person', name: data.author },
 };
+
+const keywords = [data.title, data.category, ...data.tags];
 ---
 
 <BaseLayout
@@ -43,6 +45,7 @@ const structuredData = {
   type="article"
   publishDate={data.publishDate}
   updatedDate={data.updatedDate}
+  keywords={keywords}
   structuredData={structuredData}
 >
   <article>

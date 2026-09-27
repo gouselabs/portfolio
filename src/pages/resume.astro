@@ -32,7 +32,12 @@ const structuredData = {
 };
 ---
 
-<BaseLayout title="Resume" description={`Profile summary, experience, and skills for ${SITE.fullName}.`} structuredData={structuredData}>
+<BaseLayout
+  title="Resume"
+  description={`Profile summary, experience, and skills for ${SITE.fullName}.`}
+  keywords={['Gouse Shaikh resume', 'backend engineer CV', 'Java resume', 'Spring Boot resume', 'download resume']}
+  structuredData={structuredData}
+>
   <Container class="py-16 sm:py-24">
     <div data-reveal class="flex flex-wrap items-start justify-between gap-6">
       <div class="max-w-2xl">

@@ -49,7 +49,12 @@ const structuredData = {
 };
 ---
 
-<BaseLayout title={SITE.name} description={SITE.description} structuredData={structuredData}>
+<BaseLayout
+  title={SITE.name}
+  description={SITE.description}
+  keywords={['portfolio', 'AI', 'developer tools', 'JD Decoder', 'Ext Decoder', 'Log Timeline Visualizer', 'CodeKami']}
+  structuredData={structuredData}
+>
   <!-- Hero -->
   <section class="relative border-b border-border">
     <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">

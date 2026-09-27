@@ -12,7 +12,11 @@ const resources = (await getCollection('resources')).sort(
 const categories = ['All', ...new Set(resources.map((r) => r.data.category))];
 ---
 
-<BaseLayout title="Resources" description="Useful downloadable material such as cheat sheets, guides and templates.">
+<BaseLayout
+  title="Resources"
+  description="Useful downloadable material such as cheat sheets, guides and templates."
+  keywords={['developer resources', 'cheat sheets', 'free templates']}
+>
   <Container class="py-16 sm:py-24">
     <div class="max-w-2xl">
       <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Resources</span>

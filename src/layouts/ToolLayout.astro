@@ -31,9 +31,10 @@ function toPascalCase(kebab: string) {
 const iconMap = icons as unknown as Record<string, typeof icons.Wrench>;
 const Icon = iconMap[toPascalCase(data.icon)] ?? icons.Wrench;
 const isExtension = data.toolUrl?.includes('marketplace.visualstudio.com') ?? false;
+const keywords = [data.title, data.category, ...data.techStack, 'developer tool'];
 ---
 
-<BaseLayout title={data.title} description={data.summary} type="article" publishDate={data.publishDate}>
+<BaseLayout title={data.title} description={data.summary} type="article" publishDate={data.publishDate} keywords={keywords}>
   <article>
     <Container narrow class="py-10 sm:py-14">
       <Breadcrumb items={[{ label: 'Tools', href: '/tools' }, { label: data.title }]} />

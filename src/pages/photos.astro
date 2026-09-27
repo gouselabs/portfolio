@@ -16,7 +16,11 @@ const gallery = Array.from({ length: 10 }, (_, i) => ({
 }));
 ---
 
-<BaseLayout title="Photos" description="A visual personal space with photography across portraits, travel, nature, architecture, and experimental work.">
+<BaseLayout
+  title="Photos"
+  description="A visual personal space with photography across portraits, travel, nature, architecture, and experimental work."
+  keywords={['photography', 'photo gallery']}
+>
   <Container class="py-16 sm:py-24">
     <div class="max-w-2xl">
       <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Photos</span>

@@ -23,9 +23,10 @@ interface Props {
 
 const { project, related } = Astro.props;
 const { data, id } = project;
+const keywords = [data.title, data.category, ...data.techStack, 'project'];
 ---
 
-<BaseLayout title={data.title} description={data.summary} type="article" publishDate={data.publishDate}>
+<BaseLayout title={data.title} description={data.summary} type="article" publishDate={data.publishDate} keywords={keywords}>
   <article>
     <div class="aspect-[21/9] w-full overflow-hidden">
       {

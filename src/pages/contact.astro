@@ -7,7 +7,11 @@ import { Mail, Phone, MapPin, Send } from '@lucide/astro';
 import { SITE } from '../data/site';
 ---
 
-<BaseLayout title="Contact" description={`Get in touch with ${SITE.fullName}.`}>
+<BaseLayout
+  title="Contact"
+  description={`Get in touch with ${SITE.fullName}.`}
+  keywords={['contact Gouse Shaikh', 'hire backend engineer', 'get in touch']}
+>
   <Container class="py-16 sm:py-24">
     <div data-reveal class="max-w-2xl">
       <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Contact</span>

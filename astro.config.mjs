@@ -2,11 +2,9 @@
 import { defineConfig } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
-import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 
-// TODO: replace with the real production domain before deploying.
-const SITE_URL = 'https://gouselabs.dev';
+const SITE_URL = 'https://gouselabs.com';
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,5 +16,5 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  integrations: [sitemap(), mdx()]
+  integrations: [mdx()]
 });

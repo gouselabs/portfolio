@@ -43,7 +43,11 @@ const buildCategories = [
 ];
 ---
 
-<BaseLayout title="About" description={`The story behind ${SITE.fullName}: what I build, what I focus on, and what I'm currently exploring.`}>
+<BaseLayout
+  title="About"
+  description={`The story behind ${SITE.fullName}: what I build, what I focus on, and what I'm currently exploring.`}
+  keywords={['about Gouse Shaikh', 'backend engineer bio', 'engineering focus']}
+>
   <section class="border-b border-border py-16 sm:py-24">
     <Container narrow>
       <div data-reveal class="flex flex-col items-center gap-6 text-center">

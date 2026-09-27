@@ -9,7 +9,11 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
 const categories = ['All', ...new Set(projects.map((p) => p.data.category))];
 ---
 
-<BaseLayout title="Projects" description="Serious engineering work: backend systems, full-stack products, AI experiments, and developer tools.">
+<BaseLayout
+  title="Projects"
+  description="Serious engineering work: backend systems, full-stack products, AI experiments, and developer tools."
+  keywords={['software projects', 'backend projects', 'AI projects', 'portfolio projects']}
+>
   <Container class="py-16 sm:py-24">
     <div class="max-w-2xl">
       <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Projects</span>

@@ -1,5 +1,5 @@
 ---
-import { SITE } from '../data/site';
+import { SITE, SITE_KEYWORDS } from '../data/site';
 
 interface Props {
   title: string;
@@ -9,6 +9,7 @@ interface Props {
   publishDate?: Date;
   updatedDate?: Date;
   noindex?: boolean;
+  keywords?: string[];
   structuredData?: Record<string, unknown>;
 }
 
@@ -20,16 +21,21 @@ const {
   publishDate,
   updatedDate,
   noindex = false,
+  keywords,
   structuredData,
 } = Astro.props;
 
 const pageTitle = title === SITE.name ? SITE.title : `${title} | ${SITE.brand}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? SITE.url);
 const ogImage = image ? new URL(image, Astro.site ?? SITE.url).toString() : undefined;
+
+// Page-specific keywords lead, then sitewide ones fill in, deduped.
+const allKeywords = [...new Set([...(keywords ?? []), ...SITE_KEYWORDS])];
 ---
 
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
+<meta name="keywords" content={allKeywords.join(', ')} />
 <link rel="canonical" href={canonicalURL} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 

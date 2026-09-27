@@ -15,10 +15,11 @@ interface Props {
   publishDate?: Date;
   updatedDate?: Date;
   noindex?: boolean;
+  keywords?: string[];
   structuredData?: Record<string, unknown>;
 }
 
-const { title, description, image, type, publishDate, updatedDate, noindex, structuredData } = Astro.props;
+const { title, description, image, type, publishDate, updatedDate, noindex, keywords, structuredData } = Astro.props;
 ---
 
 <!doctype html>
@@ -39,10 +40,11 @@ const { title, description, image, type, publishDate, updatedDate, noindex, stru
       publishDate={publishDate}
       updatedDate={updatedDate}
       noindex={noindex}
+      keywords={keywords}
       structuredData={structuredData}
     />
 
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="sitemap" href="/sitemap.xml" />
     <link rel="alternate" type="application/rss+xml" title={SITE.brand} href="/rss.xml" />
 
     <script is:inline>

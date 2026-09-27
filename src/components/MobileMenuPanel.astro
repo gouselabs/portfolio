@@ -1,20 +1,13 @@
 ---
-import { Menu, X } from '@lucide/astro';
+// Rendered outside <Header> deliberately: <header> is `position: sticky`,
+// and a sticky ancestor becomes the containing block for a `position: fixed`
+// descendant (same as transform/filter/will-change ancestors do). Nested
+// inside the ~64px-tall header, this panel would be squashed to zero height
+// instead of covering the viewport. Keeping it as a sibling of <Header> in
+// BaseLayout avoids that.
 import { NAV_LINKS, SECONDARY_LINKS } from '../data/site';
 import SocialLinks from './SocialLinks.astro';
 ---
-
-<button
-  type="button"
-  id="mobile-menu-button"
-  aria-label="Open menu"
-  aria-expanded="false"
-  aria-controls="mobile-menu"
-  class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg"
->
-  <Menu class="h-4 w-4" data-icon="menu-open" />
-  <X class="hidden h-4 w-4" data-icon="menu-close" />
-</button>
 
 <div
   id="mobile-menu"

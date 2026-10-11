@@ -22,3 +22,7 @@ const STATUS_BADGE_VARIANT = {
 export function statusBadgeVariant(status: string): 'success' | 'warning' | 'default' | 'outline' {
   return STATUS_BADGE_VARIANT[status as keyof typeof STATUS_BADGE_VARIANT] ?? 'default';
 }
+
+export function formatPrice(amountUsd: number): string {
+  return amountUsd === 0 ? 'Free' : `$${amountUsd.toFixed(2)}`;
+}

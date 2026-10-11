@@ -1,29 +1,47 @@
 ---
-import AbstractArt from './AbstractArt.astro';
+import { Image } from 'astro:assets';
+import { ArrowUpRight, BookOpen, Baby } from '@lucide/astro';
 import Badge from './Badge.astro';
+import { formatPrice } from '../lib/format';
+import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-  slug: string;
-  title: string;
-  description: string;
-  price: string;
-  category: string;
+  product: CollectionEntry<'products'>;
 }
 
-const { slug, title, description, price, category } = Astro.props;
+const { product } = Astro.props;
+const { data, id } = product;
 ---
 
 <article class="hover-glow group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
-  <a href={`/store/${slug}`} class="absolute inset-0 z-10" aria-label={`View product: ${title}`}></a>
+  <a href={`/store/${id}`} class="absolute inset-0 z-10" aria-label={`View product: ${data.title}`}></a>
 
-  <div class="aspect-square overflow-hidden">
-    <AbstractArt seed={slug} variant="circuit" class="transition-transform duration-500 group-hover:scale-105" />
+  <div class="overflow-hidden border-b border-border bg-bg">
+    <Image
+      src={data.cover}
+      alt={data.coverAlt}
+      width={720}
+      sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+      class="h-auto w-full transition-transform duration-500 group-hover:scale-[1.03]"
+    />
   </div>
 
-  <div class="flex flex-1 flex-col gap-2 p-6">
-    <Badge variant="outline" class="w-fit">{category}</Badge>
-    <h3 class="font-display text-lg font-medium">{title}</h3>
-    <p class="text-sm text-fg-muted">{description}</p>
-    <p class="mt-auto pt-3 font-mono text-sm font-medium text-accent">{price}</p>
+  <div class="flex flex-1 flex-col gap-3 p-6">
+    <Badge variant="accent" class="w-fit">{data.category}</Badge>
+    <h3 class="font-display text-xl font-medium">{data.title}</h3>
+    <p class="text-sm text-fg-muted">{data.summary}</p>
+
+    <div class="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-fg-muted">
+      <span class="inline-flex items-center gap-1.5"><Baby class="h-3.5 w-3.5" aria-hidden="true" />{data.ageRange}</span>
+      {data.pages && <span class="inline-flex items-center gap-1.5"><BookOpen class="h-3.5 w-3.5" aria-hidden="true" />{data.pages} pages</span>}
+    </div>
+
+    <div class="mt-auto flex items-center justify-between pt-3">
+      <p class="font-display text-xl font-medium text-accent">{formatPrice(data.priceUsd)}</p>
+      <span class="inline-flex items-center gap-1 text-sm font-medium transition-colors group-hover:text-accent">
+        View details
+        <ArrowUpRight class="h-3.5 w-3.5" aria-hidden="true" />
+      </span>
+    </div>
   </div>
 </article>

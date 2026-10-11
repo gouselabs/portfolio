@@ -110,4 +110,26 @@ const resources = defineCollection({
   }),
 });
 
-export const collections = { blog, projects, tools, resources };
+const products = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/products' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      tagline: z.string(),
+      summary: z.string(),
+      category: z.string(),
+      priceUsd: z.number().nonnegative(),
+      ageRange: z.string(),
+      pages: z.number().int().positive().optional(),
+      format: z.string().default('Digital download'),
+      cover: image(),
+      coverAlt: z.string(),
+      buyUrl: z.string().url(),
+      keywords: z.array(z.string()).default([]),
+      includes: z.array(z.string()).default([]),
+      features: z.array(z.string()).default([]),
+      order: z.number().default(0),
+    }),
+});
+
+export const collections = { blog, projects, tools, resources, products };

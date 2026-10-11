@@ -44,13 +44,14 @@ src/
 - **Profile photo:** replace `src/assets/images/profile.png`.
 - **Add a tool or project:** copy an existing file in `src/content/tools/` or `src/content/projects/` and edit the frontmatter.
 - **Add a blog post:** add an `.mdx` file to `src/content/blog/`. The Blog page and the home page section appear automatically once one exists.
+- **Add a store product:** copy a file in `src/content/products/`, put the cover image in `src/assets/images/store/`, and set `buyUrl` to the Gumroad link. The store page, product page and sitemap update automatically.
 - **Add a resource:** add a `.md` file to `src/content/resources/`. The same applies to the Resources page.
 - **Placeholder content:** any entry with `placeholder: true` in its frontmatter shows a "Placeholder content" notice. Set it to `false` once the entry is real.
 
 ## Before deploying
 
 1. Set the real production domain in `astro.config.mjs` (`SITE_URL`) and in `src/data/site.ts` (`SITE.url`). Sitemap, RSS, canonical links and `robots.txt` all use it.
-2. The Photos page still shows placeholder tiles, and the Store page is a "coming soon" placeholder.
+2. The Photos page still shows placeholder tiles.
 
 ## Build output
 

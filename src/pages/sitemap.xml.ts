@@ -29,11 +29,18 @@ export const GET: APIRoute = async ({ site }) => {
     { loc: '/contact', changefreq: 'yearly', priority: 0.6 },
   ];
 
-  const [projects, tools, posts] = await Promise.all([
+  const [projects, tools, posts, products] = await Promise.all([
     getCollection('projects'),
     getCollection('tools'),
     getCollection('blog', ({ data }) => !data.draft),
+    getCollection('products'),
   ]);
+
+  const productEntries: Entry[] = products.map((p) => ({
+    loc: `/store/${p.id}`,
+    changefreq: 'monthly',
+    priority: 0.6,
+  }));
 
   const projectEntries: Entry[] = projects.map((p) => ({
     loc: `/projects/${p.id}`,
@@ -56,7 +63,7 @@ export const GET: APIRoute = async ({ site }) => {
     priority: 0.6,
   }));
 
-  const entries = [...staticEntries, ...projectEntries, ...toolEntries, ...blogEntries];
+  const entries = [...staticEntries, ...projectEntries, ...toolEntries, ...productEntries, ...blogEntries];
 
   const urlset = entries
     .map(

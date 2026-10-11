@@ -1,49 +1,58 @@
 ---
+import { getCollection } from 'astro:content';
+import { Store } from '@lucide/astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 import EmptyState from '../../components/EmptyState.astro';
-import Badge from '../../components/Badge.astro';
-import { Store } from '@lucide/astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { SITE } from '../../data/site';
 
-const plannedCategories = [
-  'Wallpapers',
-  'Developer templates',
-  'Digital resources',
-  'UI assets',
-  'Photography',
-  'E-books',
-];
+const products = (await getCollection('products')).sort((a, b) => a.data.order - b.data.order);
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `${SITE.brand} Store`,
+  itemListElement: products.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    url: new URL(`/store/${p.id}`, SITE.url).toString(),
+    name: p.data.title,
+  })),
+};
 ---
 
 <BaseLayout
   title="Store"
-  description="Digital products, coming soon. Wallpapers, developer templates, digital resources, and more."
-  keywords={['digital products', 'developer templates', 'wallpapers']}
+  description="Screen-free activity books for kids: coding worksheets, robot brain challenges and detective puzzles, made by Gouse Labs."
+  keywords={['kids activity books', 'screen-free activity book', 'kids coding worksheets', 'logic puzzles for kids', 'kids mystery puzzle book', 'STEM activity book']}
+  structuredData={structuredData}
 >
   <Container class="py-16 sm:py-24">
-    <div class="max-w-2xl">
+    <div data-reveal class="max-w-2xl">
       <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Store</span>
-      <h1 class="mt-4 text-balance font-display text-4xl font-medium sm:text-5xl">Digital Store</h1>
+      <h1 class="mt-4 text-balance font-display text-4xl font-medium sm:text-5xl">Store</h1>
       <p class="mt-4 text-fg-muted">
-        The store isn't open yet. Once it launches, this is where digital products (wallpapers,
-        templates, and resources) will be available.
+        Screen-free activity books that build logic, observation and problem-solving skills in kids.
+        Each one is a digital download, sold securely through Gumroad.
       </p>
     </div>
 
-    <EmptyState
-      class="mt-12"
-      icon={Store}
-      title="No products yet"
-      description="The store is being built. In the meantime, check out the free resources page."
-    >
-      <a href="/resources" class="mt-2 text-sm font-medium text-accent hover:underline">Browse free resources →</a>
-    </EmptyState>
-
-    <div class="mt-12">
-      <p class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">Planned categories</p>
-      <div class="mt-4 flex flex-wrap gap-2">
-        {plannedCategories.map((category) => <Badge variant="outline">{category}</Badge>)}
-      </div>
-    </div>
+    {
+      products.length === 0 ? (
+        <EmptyState
+          class="mt-12"
+          icon={Store}
+          title="No products yet"
+          description="Nothing is listed right now. Check back soon."
+        />
+      ) : (
+        <div data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {products.map((product) => (
+            <ProductCard product={product} />
+          ))}
+        </div>
+      )
+    }
   </Container>
 </BaseLayout>

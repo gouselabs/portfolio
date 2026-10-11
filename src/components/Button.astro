@@ -9,6 +9,7 @@ interface Props {
   showArrow?: boolean;
   disabled?: boolean;
   type?: 'button' | 'submit';
+  external?: boolean;
 }
 
 const {
@@ -19,6 +20,7 @@ const {
   showArrow = false,
   disabled = false,
   type = 'button',
+  external = false,
 } = Astro.props;
 
 const base =
@@ -41,7 +43,14 @@ const classes = [base, variants[variant], sizes[size], disabled ? disabledClasse
 const Tag = href ? 'a' : 'button';
 ---
 
-<Tag class={classes} href={href} type={!href ? type : undefined} aria-disabled={disabled || undefined}>
+<Tag
+  class={classes}
+  href={href}
+  type={!href ? type : undefined}
+  target={href && external ? '_blank' : undefined}
+  rel={href && external ? 'noopener noreferrer' : undefined}
+  aria-disabled={disabled || undefined}
+>
   <slot />
   {showArrow && <ArrowRight class="h-4 w-4" aria-hidden="true" />}
 </Tag>

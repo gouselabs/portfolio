@@ -1,7 +1,141 @@
 ---
-// No products exist yet, so this route is scaffolded so the store can grow
-// into real content collections/Worker-backed data in V2 without a rewrite.
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { Check, ExternalLink, BookOpen, Baby, Download, ShieldCheck } from '@lucide/astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Badge from '../../components/Badge.astro';
+import Button from '../../components/Button.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { formatPrice } from '../../lib/format';
+import { SITE } from '../../data/site';
+
 export async function getStaticPaths() {
-  return [];
+  const products = await getCollection('products');
+  return products.map((product) => ({
+    params: { slug: product.id },
+    props: { product },
+  }));
 }
+
+const { product } = Astro.props;
+const { data, id } = product;
+
+const others = (await getCollection('products'))
+  .filter((p) => p.id !== id)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const pageUrl = new URL(`/store/${id}`, SITE.url).toString();
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: data.title,
+  description: data.summary,
+  category: data.category,
+  brand: { '@type': 'Brand', name: SITE.brand },
+  url: pageUrl,
+  offers: {
+    '@type': 'Offer',
+    price: data.priceUsd.toFixed(2),
+    priceCurrency: 'USD',
+    availability: 'https://schema.org/InStock',
+    url: data.buyUrl,
+  },
+};
 ---
+
+<BaseLayout
+  title={data.title}
+  description={data.summary}
+  type="website"
+  keywords={[data.title, data.category, data.ageRange, ...data.keywords, 'screen-free activity book']}
+  structuredData={structuredData}
+>
+  <Container class="py-10 sm:py-14">
+    <Breadcrumb items={[{ label: 'Store', href: '/store' }, { label: data.title }]} />
+
+    <div class="mt-8 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-start">
+      <div data-reveal class="overflow-hidden rounded-2xl border border-border bg-surface shadow-xl">
+        <Image src={data.cover} alt={data.coverAlt} width={1005} loading="eager" class="h-auto w-full" />
+      </div>
+
+      <div data-reveal>
+        <Badge variant="accent">{data.category}</Badge>
+        <h1 class="mt-4 text-balance font-display text-3xl font-medium sm:text-4xl">{data.title}</h1>
+        <p class="mt-3 text-lg text-fg-muted">{data.tagline}</p>
+
+        <div class="mt-5 flex flex-wrap gap-2">
+          <Badge variant="outline"><Baby class="h-3.5 w-3.5" aria-hidden="true" />{data.ageRange}</Badge>
+          {data.pages && <Badge variant="outline"><BookOpen class="h-3.5 w-3.5" aria-hidden="true" />{data.pages} pages</Badge>}
+          <Badge variant="outline"><Download class="h-3.5 w-3.5" aria-hidden="true" />{data.format}</Badge>
+        </div>
+
+        <p class="mt-8 font-display text-4xl font-medium text-accent">{formatPrice(data.priceUsd)}</p>
+
+        <div class="mt-5 flex flex-wrap gap-3">
+          <Button href={data.buyUrl} size="lg" external>
+            Buy on Gumroad
+            <ExternalLink class="h-4 w-4" aria-hidden="true" />
+          </Button>
+          <Button href="/store" size="lg" variant="secondary">Back to store</Button>
+        </div>
+
+        <p class="mt-4 flex items-start gap-2 text-sm text-fg-muted">
+          <ShieldCheck class="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+          Checkout and delivery are handled securely by Gumroad. You'll be taken to their site to complete your purchase.
+        </p>
+
+        {
+          data.features.length > 0 && (
+            <ul class="mt-8 space-y-3 border-t border-border pt-6">
+              {data.features.map((feature) => (
+                <li class="flex items-start gap-2.5 text-sm text-fg-muted">
+                  <Check class="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </div>
+
+    {
+      data.includes.length > 0 && (
+        <section class="mt-16 border-t border-border pt-12">
+          <div data-reveal>
+            <SectionHeading eyebrow="Inside the book" title="What's inside" />
+          </div>
+          <ul data-reveal-group class="mt-8 grid gap-3 sm:grid-cols-2">
+            {data.includes.map((item) => (
+              <li class="hover-glow flex items-start gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm text-fg-muted">
+                <span class="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+                  <Check class="h-3 w-3" aria-hidden="true" />
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      others.length > 0 && (
+        <section class="mt-16 border-t border-border pt-12">
+          <div data-reveal>
+            <SectionHeading eyebrow="More from the store" title="You might also like" />
+          </div>
+          <div data-reveal-group class="mt-8 grid gap-6 sm:grid-cols-2">
+            {others.map((other) => (
+              <ProductCard product={other} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </Container>
+</BaseLayout>

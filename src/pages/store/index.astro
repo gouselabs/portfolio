@@ -9,6 +9,17 @@ import { SITE } from '../../data/site';
 
 const products = (await getCollection('products')).sort((a, b) => a.data.order - b.data.order);
 
+// Sections show in this order; any category not listed is appended after them.
+const CATEGORY_ORDER = ['Developer Resources', "Kids' Activity Books"];
+const categories = [
+  ...CATEGORY_ORDER.filter((c) => products.some((p) => p.data.category === c)),
+  ...new Set(products.map((p) => p.data.category).filter((c) => !CATEGORY_ORDER.includes(c))),
+];
+const groups = categories.map((category) => ({
+  category,
+  items: products.filter((p) => p.data.category === category),
+}));
+
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -24,8 +35,8 @@ const structuredData = {
 
 <BaseLayout
   title="Store"
-  description="Screen-free activity books for kids: coding worksheets, robot brain challenges and detective puzzles, made by Gouse Labs."
-  keywords={['kids activity books', 'screen-free activity book', 'kids coding worksheets', 'logic puzzles for kids', 'kids mystery puzzle book', 'STEM activity book']}
+  description="Digital products from Gouse Labs: AI IDE migration playbooks for developers, and screen-free activity books for kids."
+  keywords={['developer resources', 'AI IDE migration prompts', 'Cursor rules', 'kids activity books', 'screen-free activity book', 'kids coding worksheets', 'logic puzzles for kids']}
   structuredData={structuredData}
 >
   <Container class="py-16 sm:py-24">
@@ -33,7 +44,7 @@ const structuredData = {
       <span class="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent"><span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />Store</span>
       <h1 class="mt-4 text-balance font-display text-4xl font-medium sm:text-5xl">Store</h1>
       <p class="mt-4 text-fg-muted">
-        Screen-free activity books that build logic, observation and problem-solving skills in kids.
+        Digital products I've made, from developer playbooks to screen-free activity books for kids.
         Each one is a digital download, sold securely through Gumroad.
       </p>
     </div>
@@ -47,11 +58,16 @@ const structuredData = {
           description="Nothing is listed right now. Check back soon."
         />
       ) : (
-        <div data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <ProductCard product={product} />
-          ))}
-        </div>
+        groups.map((group) => (
+          <section class="mt-14">
+            <h2 data-reveal class="font-display text-2xl font-medium">{group.category}</h2>
+            <div data-reveal-group class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {group.items.map((product) => (
+                <ProductCard product={product} />
+              ))}
+            </div>
+          </section>
+        ))
       )
     }
   </Container>

@@ -114,8 +114,8 @@ const structuredData = {
         <SocialLinks class="mt-8" includeEmail />
       </div>
 
-      <div class="relative hidden lg:block" data-reveal>
-        <div class="relative mx-auto mb-16 max-w-md">
+      <div class="relative order-first lg:order-none" data-reveal>
+        <div class="relative mx-auto max-w-[15rem] sm:max-w-xs lg:mb-16 lg:max-w-md">
           <div class="pointer-events-none absolute -inset-8 rounded-[3rem] bg-gradient-to-br from-accent/30 via-tone-violet/25 to-tone-cyan/25 blur-3xl" aria-hidden="true"></div>
           <div class="gradient-ring relative rounded-[1.75rem] p-[3px] shadow-2xl">
             <div class="aspect-square overflow-hidden rounded-3xl bg-bg">
@@ -123,24 +123,24 @@ const structuredData = {
             </div>
           </div>
 
-          <span class="animate-float absolute -right-6 top-10 z-10 inline-flex items-center gap-2 rounded-full border border-border bg-bg/90 px-3 py-1.5 text-xs font-medium shadow-lg backdrop-blur" style="animation-duration: 6.5s" aria-hidden="true">
+          <span class="animate-float absolute hidden lg:inline-flex -right-6 top-10 z-10 items-center gap-2 rounded-full border border-border bg-bg/90 px-3 py-1.5 text-xs font-medium shadow-lg backdrop-blur" style="animation-duration: 6.5s" aria-hidden="true">
             <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-tone-emerald-soft text-tone-emerald"><Leaf class="h-3 w-3" /></span>
             Spring Boot
           </span>
-          <span class="animate-float absolute -left-8 top-[30%] z-10 inline-flex items-center gap-2 rounded-full border border-border bg-bg/90 px-3 py-1.5 text-xs font-medium shadow-lg backdrop-blur" style="animation-duration: 7.5s; animation-delay: -2s" aria-hidden="true">
+          <span class="animate-float absolute hidden lg:inline-flex -left-8 top-[30%] z-10 items-center gap-2 rounded-full border border-border bg-bg/90 px-3 py-1.5 text-xs font-medium shadow-lg backdrop-blur" style="animation-duration: 7.5s; animation-delay: -2s" aria-hidden="true">
             <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-tone-violet-soft text-tone-violet"><Workflow class="h-3 w-3" /></span>
             Kafka
           </span>
-          <span class="animate-float absolute -right-8 top-[52%] z-10 inline-flex items-center gap-2 rounded-full border border-border bg-bg/90 px-3 py-1.5 text-xs font-medium shadow-lg backdrop-blur" style="animation-duration: 5.5s; animation-delay: -4s" aria-hidden="true">
+          <span class="animate-float absolute hidden lg:inline-flex -right-8 top-[52%] z-10 items-center gap-2 rounded-full border border-border bg-bg/90 px-3 py-1.5 text-xs font-medium shadow-lg backdrop-blur" style="animation-duration: 5.5s; animation-delay: -4s" aria-hidden="true">
             <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-tone-amber-soft text-tone-amber"><Coffee class="h-3 w-3" /></span>
             Java
           </span>
-          <span class="animate-float absolute -bottom-3 right-10 z-10 inline-flex items-center gap-2 rounded-full border border-border bg-bg/90 px-3 py-1.5 text-xs font-medium shadow-lg backdrop-blur" style="animation-duration: 8s; animation-delay: -1s" aria-hidden="true">
+          <span class="animate-float absolute hidden lg:inline-flex -bottom-3 right-10 z-10 items-center gap-2 rounded-full border border-border bg-bg/90 px-3 py-1.5 text-xs font-medium shadow-lg backdrop-blur" style="animation-duration: 8s; animation-delay: -1s" aria-hidden="true">
             <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-tone-cyan-soft text-tone-cyan"><Cloud class="h-3 w-3" /></span>
             AWS
           </span>
 
-          <div class="absolute -bottom-16 -left-10 z-10 w-56">
+          <div class="absolute hidden lg:block -bottom-16 -left-10 z-10 w-56">
             <CodeCard compact />
           </div>
         </div>

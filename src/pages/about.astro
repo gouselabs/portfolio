@@ -91,7 +91,7 @@ const buildCategories = [
 
   <section class="border-b border-border py-16 sm:py-24">
     <Container narrow>
-      <SectionHeading icon="layers" tone="cyan" eyebrow="Engineering focus" title="What I work with" description="Only the technologies that are genuinely relevant, not an exhaustive keyword list." />
+      <SectionHeading icon="layers" tone="cyan" eyebrow="Engineering focus" title="What I work with" description="The languages, frameworks and platforms I use day to day." />
       <div data-reveal-group class="mt-8 flex flex-wrap gap-2">
         {ENGINEERING_FOCUS.map((tag, i) => <Badge variant={BADGE_CYCLE[i % BADGE_CYCLE.length]}>{tag}</Badge>)}
       </div>
@@ -119,7 +119,7 @@ const buildCategories = [
 
   <section class="border-b border-border py-16 sm:py-24">
     <Container narrow>
-      <SectionHeading icon="sparkles" tone="violet" eyebrow="Currently focused on" title="What's on my mind lately" description="A high-level view, not a day-to-day list, grounded in what I'm actually building and studying." />
+      <SectionHeading icon="sparkles" tone="violet" eyebrow="Currently focused on" title="What's on my mind lately" description="The areas I'm currently building in and learning more about." />
       <div data-reveal-group class="mt-8 grid gap-3 sm:grid-cols-2">
         {
           FOCUS_AREAS.map((item, i) => {

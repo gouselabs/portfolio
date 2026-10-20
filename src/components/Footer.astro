@@ -1,27 +1,43 @@
 ---
+import { CodeXml, Heart } from '@lucide/astro';
 import Container from './Container.astro';
 import SocialLinks from './SocialLinks.astro';
 import { SITE, FOOTER_LINKS, FOOTER_QUOTE } from '../data/site';
+import { TONES, toneAt } from '../lib/tone';
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-border">
+<footer class="relative mt-8 border-t border-border">
+  <div class="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-70" aria-hidden="true"></div>
+
   <Container class="grid gap-12 py-16 lg:grid-cols-[1.4fr_1fr_1fr]">
     <div class="max-w-sm">
-      <a href="/" class="font-display text-lg font-semibold tracking-tight">{SITE.brand}</a>
+      <a href="/" class="group inline-flex items-center gap-2.5 font-display text-lg font-semibold tracking-tight">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-tone-violet text-white transition-transform duration-300 group-hover:rotate-[-8deg] group-hover:scale-110">
+          <CodeXml class="h-4 w-4" aria-hidden="true" />
+        </span>
+        <span class="text-gradient">{SITE.brand}</span>
+      </a>
       <p class="mt-3 text-sm text-fg-muted">{SITE.description}</p>
       <SocialLinks class="mt-6" includeEmail />
     </div>
 
     {
-      FOOTER_LINKS.map((group) => (
+      FOOTER_LINKS.map((group, gi) => (
         <div>
           <p class="font-mono text-xs uppercase tracking-[0.2em] text-fg-muted">{group.heading}</p>
           <ul class="mt-4 space-y-3">
-            {group.links.map((link) => (
+            {group.links.map((link, li) => (
               <li>
-                <a href={link.href} class="text-sm text-fg-muted transition-colors hover:text-fg">
+                <a href={link.href} class="group inline-flex items-center gap-2 text-sm text-fg-muted transition-colors hover:text-fg">
+                  <span
+                    class:list={[
+                      'h-1.5 w-1.5 rounded-full opacity-40 transition-all duration-200 group-hover:scale-150 group-hover:opacity-100',
+                      TONES[toneAt(gi * 5 + li)].dot,
+                    ]}
+                    aria-hidden="true"
+                  />
                   {link.label}
                 </a>
               </li>
@@ -34,6 +50,9 @@ const year = new Date().getFullYear();
 
   <Container class="flex flex-col gap-2 border-t border-border py-6 text-xs text-fg-muted sm:flex-row sm:items-center sm:justify-between">
     <p>&copy; {year} {SITE.name}. All rights reserved.</p>
-    <p class="font-mono">{FOOTER_QUOTE}</p>
+    <p class="inline-flex items-center gap-1.5 font-mono">
+      {FOOTER_QUOTE}
+      <Heart class="h-3.5 w-3.5 fill-tone-rose text-tone-rose" aria-hidden="true" />
+    </p>
   </Container>
 </footer>

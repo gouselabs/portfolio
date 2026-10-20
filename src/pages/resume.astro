@@ -62,7 +62,7 @@ const structuredData = {
     <StatGrid stats={HERO_STATS} class="mt-10" />
 
     <div class="mt-14">
-      <SectionHeading eyebrow="Experience" title="Work experience" />
+      <SectionHeading icon="briefcase" tone="violet" eyebrow="Experience" title="Work experience" />
       <div data-reveal-group class="mt-8 space-y-10 border-l-2 border-accent/30 pl-6">
         {
           EXPERIENCE.map((role) => (
@@ -88,12 +88,12 @@ const structuredData = {
     </div>
 
     <div class="mt-14">
-      <SectionHeading eyebrow="Skills" title="Technical skills" />
+      <SectionHeading icon="layers" tone="cyan" eyebrow="Skills" title="Technical skills" />
       <SkillGroupGrid class="mt-8" />
     </div>
 
     <div class="mt-14">
-      <SectionHeading eyebrow="Projects" title="Selected projects" />
+      <SectionHeading icon="folder-kanban" tone="blue" eyebrow="Projects" title="Selected projects" />
       <ul data-reveal-group class="mt-6 grid gap-3 sm:grid-cols-2">
         {
           projects.map((project) => (
@@ -110,7 +110,7 @@ const structuredData = {
 
     <div class="mt-14 grid gap-10 sm:grid-cols-2">
       <div>
-        <SectionHeading eyebrow="Education" title="Education" />
+        <SectionHeading icon="graduation-cap" tone="emerald" eyebrow="Education" title="Education" />
         <div class="mt-8 flex gap-3">
           <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
             <GraduationCap class="h-4 w-4" aria-hidden="true" />
@@ -125,7 +125,7 @@ const structuredData = {
       </div>
 
       <div>
-        <SectionHeading eyebrow="Certifications" title="Certifications & awards" />
+        <SectionHeading icon="award" tone="amber" eyebrow="Certifications" title="Certifications & awards" />
         <ul data-reveal-group class="mt-8 space-y-3">
           {
             CERTIFICATIONS.map((cert) => {

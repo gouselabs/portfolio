@@ -10,6 +10,9 @@ import StatGrid from '../components/StatGrid.astro';
 import ProfilePhoto from '../components/ProfilePhoto.astro';
 import { ENGINEERING_FOCUS, SITE } from '../data/site';
 import { SUMMARY, HERO_STATS, FOCUS_AREAS } from '../data/resume';
+import { TONES, toneAt } from '../lib/tone';
+
+const BADGE_CYCLE = ['accent', 'violet', 'cyan', 'emerald', 'amber', 'rose'] as const;
 
 function toPascalCase(kebab: string) {
   return kebab
@@ -48,13 +51,20 @@ const buildCategories = [
   description={`The story behind ${SITE.fullName}: what I build, what I focus on, and what I'm currently exploring.`}
   keywords={['about Gouse Shaikh', 'backend engineer bio', 'engineering focus']}
 >
-  <section class="border-b border-border py-16 sm:py-24">
-    <Container narrow>
+  <section class="relative border-b border-border py-16 sm:py-24">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div class="bg-dots absolute inset-0 opacity-40"></div>
+      <div class="aurora-blob left-[8%] -top-24 h-72 w-72" style="background: var(--color-accent)"></div>
+      <div class="aurora-blob right-[8%] top-10 h-64 w-64" style="background: var(--color-tone-violet); animation-delay: -9s; opacity: 0.28"></div>
+    </div>
+    <Container narrow class="relative">
       <div data-reveal class="flex flex-col items-center gap-6 text-center">
-        <div class="relative h-32 w-32">
-          <div class="pointer-events-none absolute -inset-3 rounded-full bg-accent/20 blur-2xl" aria-hidden="true"></div>
-          <div class="relative h-full w-full overflow-hidden rounded-full border-2 border-accent/40 shadow-xl">
-            <ProfilePhoto size={256} priority />
+        <div class="relative h-36 w-36">
+          <div class="pointer-events-none absolute -inset-4 rounded-full bg-gradient-to-br from-accent/30 via-tone-violet/25 to-tone-cyan/25 blur-2xl" aria-hidden="true"></div>
+          <div class="gradient-ring relative h-full w-full rounded-full p-[3px] shadow-xl">
+            <div class="h-full w-full overflow-hidden rounded-full bg-bg">
+              <ProfilePhoto size={288} priority />
+            </div>
           </div>
         </div>
         <div>
@@ -70,7 +80,7 @@ const buildCategories = [
 
   <section class="border-b border-border py-16 sm:py-24">
     <Container narrow>
-      <SectionHeading eyebrow="About me" title="Beyond the Resume" />
+      <SectionHeading icon="user" tone="blue" eyebrow="About me" title="Beyond the Resume" />
       <p data-reveal class="mt-8 text-lg leading-relaxed text-fg-muted">
         I'm always curious about how software works beyond the code, from system design and
         distributed systems to developer tools and AI. I like experimenting with ideas, building
@@ -81,21 +91,21 @@ const buildCategories = [
 
   <section class="border-b border-border py-16 sm:py-24">
     <Container narrow>
-      <SectionHeading eyebrow="Engineering focus" title="What I work with" description="Only the technologies that are genuinely relevant, not an exhaustive keyword list." />
+      <SectionHeading icon="layers" tone="cyan" eyebrow="Engineering focus" title="What I work with" description="Only the technologies that are genuinely relevant, not an exhaustive keyword list." />
       <div data-reveal-group class="mt-8 flex flex-wrap gap-2">
-        {ENGINEERING_FOCUS.map((tag) => <Badge variant="accent">{tag}</Badge>)}
+        {ENGINEERING_FOCUS.map((tag, i) => <Badge variant={BADGE_CYCLE[i % BADGE_CYCLE.length]}>{tag}</Badge>)}
       </div>
     </Container>
   </section>
 
   <section class="border-b border-border py-16 sm:py-24">
     <Container narrow>
-      <SectionHeading eyebrow="What I build" title="Categories of work" />
+      <SectionHeading icon="hammer" tone="emerald" eyebrow="What I build" title="Categories of work" />
       <div data-reveal-group class="mt-10 grid gap-6 sm:grid-cols-2">
         {
-          buildCategories.map((category) => (
-            <div class="hover-glow group rounded-2xl border border-border bg-surface p-6">
-              <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-soft text-accent transition-transform group-hover:scale-110">
+          buildCategories.map((category, i) => (
+            <div class:list={['hover-glow group rounded-2xl border border-border bg-surface p-6', TONES[(['emerald', 'blue', 'violet', 'amber'] as const)[i % 4]].spot]}>
+              <span class:list={['inline-flex h-11 w-11 items-center justify-center rounded-xl transition-transform duration-300 group-hover:rotate-[-8deg] group-hover:scale-110', TONES[(['emerald', 'blue', 'violet', 'amber'] as const)[i % 4]].chip]}>
                 <category.icon class="h-5 w-5" aria-hidden="true" />
               </span>
               <h3 class="mt-4 font-display text-lg font-medium">{category.title}</h3>
@@ -109,15 +119,16 @@ const buildCategories = [
 
   <section class="border-b border-border py-16 sm:py-24">
     <Container narrow>
-      <SectionHeading eyebrow="Currently focused on" title="What's on my mind lately" description="A high-level view, not a day-to-day list, grounded in what I'm actually building and studying." />
+      <SectionHeading icon="sparkles" tone="violet" eyebrow="Currently focused on" title="What's on my mind lately" description="A high-level view, not a day-to-day list, grounded in what I'm actually building and studying." />
       <div data-reveal-group class="mt-8 grid gap-3 sm:grid-cols-2">
         {
-          FOCUS_AREAS.map((item) => {
+          FOCUS_AREAS.map((item, i) => {
             const Icon = iconMap[toPascalCase(item.icon)] ?? icons.Sparkles;
+            const tone = TONES[toneAt(i + 2)];
             return (
-              <div class="hover-glow flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3">
-                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
-                  <Icon class="h-4 w-4" aria-hidden="true" />
+              <div class:list={['hover-glow group flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3', tone.spot]}>
+                <span class:list={['inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-transform duration-300 group-hover:rotate-[-8deg] group-hover:scale-110', tone.chip]}>
+                  <Icon class="h-[18px] w-[18px]" aria-hidden="true" />
                 </span>
                 <span class="text-sm font-medium">{item.label}</span>
               </div>

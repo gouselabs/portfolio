@@ -1,7 +1,8 @@
 ---
-import * as icons from '@lucide/astro';
-import Badge from './Badge.astro';
 import { SKILL_GROUPS } from '../data/resume';
+import { resolveIcon } from '../lib/icons';
+import { TONES, toneAt } from '../lib/tone';
+import * as lucide from '@lucide/astro';
 
 interface Props {
   class?: string;
@@ -10,31 +11,27 @@ interface Props {
 
 const { class: className = '', compact = false } = Astro.props;
 
-function toPascalCase(kebab: string) {
-  return kebab
-    .split('-')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('');
-}
-const iconMap = icons as unknown as Record<string, typeof icons.Wrench>;
 const groups = compact ? SKILL_GROUPS.slice(0, 6) : SKILL_GROUPS;
 ---
 
 <div data-reveal-group class:list={['grid gap-5 sm:grid-cols-2', compact ? 'lg:grid-cols-3' : '', className]}>
   {
-    groups.map((group) => {
-      const Icon = iconMap[toPascalCase(group.icon)] ?? icons.Wrench;
+    groups.map((group, i) => {
+      const Icon = resolveIcon(group.icon, lucide.Wrench);
+      const tone = TONES[toneAt(i)];
       return (
-        <div class="hover-glow rounded-2xl border border-border bg-surface p-5">
+        <div class:list={['hover-glow group rounded-2xl border border-border bg-surface p-5', tone.spot]}>
           <div class="flex items-center gap-2.5">
-            <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft text-accent">
-              <Icon class="h-4 w-4" aria-hidden="true" />
+            <span class:list={['inline-flex h-9 w-9 items-center justify-center rounded-xl transition-transform duration-300 group-hover:rotate-[-8deg] group-hover:scale-110', tone.chip]}>
+              <Icon class="h-[18px] w-[18px]" aria-hidden="true" />
             </span>
             <p class="font-medium">{group.label}</p>
           </div>
           <div class="mt-4 flex flex-wrap gap-2">
             {group.skills.map((skill) => (
-              <Badge variant="outline">{skill}</Badge>
+              <span class:list={['inline-flex items-center rounded-full px-3 py-1 font-mono text-xs transition-transform duration-200 hover:-translate-y-0.5', tone.chip]}>
+                {skill}
+              </span>
             ))}
           </div>
         </div>

@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { ArrowUpRight, BookOpen, Baby, Users } from '@lucide/astro';
 import Badge from './Badge.astro';
 import { formatPrice } from '../lib/format';
+import { TONES, toneForCategory } from '../lib/tone';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -11,9 +12,17 @@ interface Props {
 
 const { product } = Astro.props;
 const { data, id } = product;
+
+const toneName = toneForCategory(data.category);
+const tone = TONES[toneName];
+const categoryVariant = toneName === 'blue' ? 'accent' : toneName;
 ---
 
-<article class="hover-glow group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+<article class:list={['hover-glow group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface', tone.spot]}>
+  <span
+    class:list={['pointer-events-none absolute inset-x-0 top-0 z-20 h-0.5 bg-gradient-to-r to-transparent opacity-70 transition-opacity group-hover:opacity-100', tone.bar]}
+    aria-hidden="true"
+  />
   <a href={`/store/${id}`} class="absolute inset-0 z-10" aria-label={`View product: ${data.title}`}></a>
 
   <div class="overflow-hidden border-b border-border bg-bg">
@@ -27,7 +36,7 @@ const { data, id } = product;
   </div>
 
   <div class="flex flex-1 flex-col gap-3 p-6">
-    <Badge variant="accent" class="w-fit">{data.category}</Badge>
+    <Badge variant={categoryVariant} class="w-fit">{data.category}</Badge>
     <h3 class="font-display text-xl font-medium">{data.title}</h3>
     <p class="text-sm text-fg-muted">{data.summary}</p>
 
@@ -38,10 +47,10 @@ const { data, id } = product;
     </div>
 
     <div class="mt-auto flex items-center justify-between pt-3">
-      <p class="font-display text-xl font-medium text-accent">{formatPrice(data.priceUsd)}</p>
-      <span class="inline-flex items-center gap-1 text-sm font-medium transition-colors group-hover:text-accent">
+      <p class:list={['font-display text-xl font-medium', tone.text]}>{formatPrice(data.priceUsd)}</p>
+      <span class:list={['inline-flex items-center gap-1 text-sm font-medium transition-colors', tone.groupHoverText]}>
         View details
-        <ArrowUpRight class="h-3.5 w-3.5" aria-hidden="true" />
+        <ArrowUpRight class="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
       </span>
     </div>
   </div>

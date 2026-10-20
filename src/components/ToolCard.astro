@@ -1,8 +1,10 @@
 ---
-import * as icons from '@lucide/astro';
 import { ArrowUpRight } from '@lucide/astro';
 import Badge from './Badge.astro';
 import { statusBadgeVariant } from '../lib/format';
+import { resolveIcon } from '../lib/icons';
+import { TONES, toneForCategory } from '../lib/tone';
+import * as lucide from '@lucide/astro';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -12,22 +14,19 @@ interface Props {
 const { tool } = Astro.props;
 const { data, id } = tool;
 
-function toPascalCase(kebab: string) {
-  return kebab
-    .split('-')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('');
-}
-
-const iconMap = icons as unknown as Record<string, typeof icons.Wrench>;
-const Icon = iconMap[toPascalCase(data.icon)] ?? icons.Wrench;
+const Icon = resolveIcon(data.icon, lucide.Wrench);
+const tone = TONES[toneForCategory(data.category)];
 ---
 
-<article class="hover-glow group relative flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6">
+<article class:list={['hover-glow group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border bg-surface p-6', tone.spot]}>
+  <span
+    class:list={['pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r to-transparent opacity-70 transition-opacity group-hover:opacity-100', tone.bar]}
+    aria-hidden="true"
+  />
   <a href={`/tools/${id}`} class="absolute inset-0" aria-label={`Open tool: ${data.title}`}></a>
 
   <div class="flex items-start justify-between">
-    <div class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent-soft text-accent transition-transform group-hover:scale-110">
+    <div class:list={['inline-flex h-11 w-11 items-center justify-center rounded-xl transition-transform duration-300 group-hover:rotate-[-6deg] group-hover:scale-110', tone.chip]}>
       <Icon class="h-5 w-5" aria-hidden="true" />
     </div>
     <Badge variant={statusBadgeVariant(data.status)}>{data.status}</Badge>
@@ -40,9 +39,9 @@ const Icon = iconMap[toPascalCase(data.icon)] ?? icons.Wrench;
 
   <div class="mt-auto flex items-center justify-between pt-2 text-sm">
     <span class="font-mono text-xs text-fg-muted">{data.techStack.slice(0, 2).join(' · ')}</span>
-    <span class="inline-flex items-center gap-1 font-medium text-accent">
+    <span class:list={['inline-flex items-center gap-1 font-medium', tone.text]}>
       {data.toolUrl?.includes('marketplace.visualstudio.com') ? 'View extension' : 'Open tool'}
-      <ArrowUpRight class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+      <ArrowUpRight class="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
     </span>
   </div>
 </article>

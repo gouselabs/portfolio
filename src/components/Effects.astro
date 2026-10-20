@@ -1,0 +1,105 @@
+---
+import { ArrowUp } from '@lucide/astro';
+---
+
+<button
+  type="button"
+  data-back-to-top
+  aria-label="Back to top"
+  tabindex="-1"
+  class="pointer-events-none fixed bottom-5 right-5 z-40 inline-flex h-11 w-11 translate-y-3 items-center justify-center rounded-full bg-accent text-accent-fg opacity-0 shadow-[0_8px_24px_-6px_var(--color-accent)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent-hover"
+>
+  <ArrowUp class="h-5 w-5" aria-hidden="true" />
+</button>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // 1. Card spotlight: feed the pointer position to the hovered card as CSS vars.
+  if (finePointer) {
+    let frame = 0;
+    document.addEventListener(
+      'pointermove',
+      (event) => {
+        const card = (event.target as Element | null)?.closest<HTMLElement>('.hover-glow');
+        if (!card || frame) return;
+        frame = requestAnimationFrame(() => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+          card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+          frame = 0;
+        });
+      },
+      { passive: true }
+    );
+  }
+
+  // 2. Scroll progress bar + back-to-top visibility.
+  const progress = document.querySelector<HTMLElement>('[data-scroll-progress]');
+  const toTop = document.querySelector<HTMLButtonElement>('[data-back-to-top]');
+  let ticking = false;
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const y = window.scrollY;
+      progress?.style.setProperty('--p', max > 0 ? String(Math.min(1, y / max)) : '0');
+      if (toTop) {
+        const show = y > 600;
+        toTop.classList.toggle('opacity-0', !show);
+        toTop.classList.toggle('pointer-events-none', !show);
+        toTop.classList.toggle('translate-y-3', !show);
+        toTop.tabIndex = show ? 0 : -1;
+      }
+      ticking = false;
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  toTop?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
+
+  // 3. Count-up for [data-count] stats. The final value is already in the
+  // HTML, so if the observer never fires the page still shows the right number.
+  const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+
+  if (!reduceMotion && counters.length > 0 && 'IntersectionObserver' in window) {
+    const countObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          countObserver.unobserve(el);
+
+          const original = el.textContent ?? '';
+          const match = original.match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
+          if (!match) return;
+
+          const [, prefix, numberText, suffix] = match;
+          const target = parseFloat(numberText);
+          const decimals = numberText.includes('.') ? numberText.split('.')[1].length : 0;
+          const duration = 1200;
+          const start = performance.now();
+
+          const tick = (now: number) => {
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = `${prefix}${(target * eased).toFixed(decimals)}${suffix}`;
+            if (t < 1) requestAnimationFrame(tick);
+            else el.textContent = original;
+          };
+          requestAnimationFrame(tick);
+        });
+      },
+      { threshold: 0.6 }
+    );
+    counters.forEach((el) => countObserver.observe(el));
+  }
+</script>

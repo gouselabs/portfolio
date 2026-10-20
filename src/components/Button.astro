@@ -24,10 +24,10 @@ const {
 } = Astro.props;
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2';
+  'group inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2';
 
 const variants = {
-  primary: 'bg-accent text-accent-fg shadow-[0_4px_16px_-4px_var(--color-accent)] hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-6px_var(--color-accent)]',
+  primary: 'btn-shine bg-accent text-accent-fg shadow-[0_4px_16px_-4px_var(--color-accent)] hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-6px_var(--color-accent)]',
   secondary: 'border border-border text-fg hover:border-accent hover:text-accent',
   ghost: 'text-fg-muted hover:text-fg',
 };
@@ -52,5 +52,5 @@ const Tag = href ? 'a' : 'button';
   aria-disabled={disabled || undefined}
 >
   <slot />
-  {showArrow && <ArrowRight class="h-4 w-4" aria-hidden="true" />}
+  {showArrow && <ArrowRight class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />}
 </Tag>

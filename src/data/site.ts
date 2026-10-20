@@ -17,18 +17,18 @@ export const SITE = {
 } as const;
 
 export const NAV_LINKS = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  { label: 'Projects', href: '/projects' },
-  { label: 'Tools', href: '/tools' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'Resources', href: '/resources' },
-  { label: 'Store', href: '/store' },
+  { label: 'Home', href: '/', icon: 'house' },
+  { label: 'About', href: '/about', icon: 'user' },
+  { label: 'Projects', href: '/projects', icon: 'folder-kanban' },
+  { label: 'Tools', href: '/tools', icon: 'wrench' },
+  { label: 'Blog', href: '/blog', icon: 'pen-line' },
+  { label: 'Resources', href: '/resources', icon: 'library' },
+  { label: 'Store', href: '/store', icon: 'shopping-bag' },
 ] as const;
 
 export const SECONDARY_LINKS = [
-  { label: 'Resume', href: '/resume' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Resume', href: '/resume', icon: 'file-text' },
+  { label: 'Contact', href: '/contact', icon: 'mail' },
 ] as const;
 
 export const FOOTER_LINKS = [

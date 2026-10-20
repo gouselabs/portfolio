@@ -1,0 +1,50 @@
+---
+import { resolveIcon } from '../lib/icons';
+import { TONES, type Tone } from '../lib/tone';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+
+// Every item is a skill listed on the resume.
+const items: { label: string; icon: string; tone: Tone }[] = [
+  { label: 'Java', icon: 'coffee', tone: 'amber' },
+  { label: 'Spring Boot', icon: 'leaf', tone: 'emerald' },
+  { label: 'Apache Kafka', icon: 'workflow', tone: 'violet' },
+  { label: 'Microservices', icon: 'boxes', tone: 'blue' },
+  { label: 'Redis', icon: 'database', tone: 'rose' },
+  { label: 'PostgreSQL', icon: 'database', tone: 'cyan' },
+  { label: 'AWS', icon: 'cloud', tone: 'amber' },
+  { label: 'Docker', icon: 'container', tone: 'blue' },
+  { label: 'Kubernetes', icon: 'ship-wheel', tone: 'cyan' },
+  { label: 'gRPC', icon: 'zap', tone: 'violet' },
+  { label: 'System Design', icon: 'network', tone: 'emerald' },
+  { label: 'CI/CD', icon: 'git-branch', tone: 'rose' },
+];
+---
+
+<!-- Decorative: the same skills are listed in full in the Tech Arsenal section. -->
+<div class:list={['marquee', className]} aria-hidden="true">
+  <div class="marquee-track">
+    {
+      [0, 1].map(() => (
+        <ul class="flex shrink-0 items-center gap-3 pr-3">
+          {items.map((item) => {
+            const Icon = resolveIcon(item.icon);
+            const tone = TONES[item.tone];
+            return (
+              <li class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium">
+                <span class:list={['inline-flex h-6 w-6 items-center justify-center rounded-full', tone.chip]}>
+                  <Icon class="h-3.5 w-3.5" />
+                </span>
+                {item.label}
+              </li>
+            );
+          })}
+        </ul>
+      ))
+    }
+  </div>
+</div>

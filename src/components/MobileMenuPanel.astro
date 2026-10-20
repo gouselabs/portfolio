@@ -2,69 +2,111 @@
 // Rendered outside <Header> deliberately: <header> is `position: sticky`,
 // and a sticky ancestor becomes the containing block for a `position: fixed`
 // descendant (same as transform/filter/will-change ancestors do). Nested
-// inside the ~64px-tall header, this panel would be squashed to zero height
-// instead of covering the viewport. Keeping it as a sibling of <Header> in
-// BaseLayout avoids that.
+// inside the ~64px-tall header, this panel would be squashed to zero height.
+// Keeping it as a sibling of <Header> in BaseLayout avoids that.
+//
+// It is a compact dropdown card under the header (not full screen), with a
+// dimmed backdrop that closes the menu when tapped.
 import { NAV_LINKS, SECONDARY_LINKS } from '../data/site';
+import { resolveIcon } from '../lib/icons';
+import { TONES, toneAt } from '../lib/tone';
 import SocialLinks from './SocialLinks.astro';
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
+const links = [...NAV_LINKS, ...SECONDARY_LINKS];
 ---
 
-<div
-  id="mobile-menu"
-  class="fixed inset-x-0 top-16 bottom-0 z-30 hidden flex-col overflow-y-auto bg-bg opacity-0 translate-y-2 transition-all duration-200 lg:hidden"
->
-  <nav class="flex flex-1 flex-col gap-1 px-5 pt-6" aria-label="Mobile primary">
-    {
-      NAV_LINKS.map((link) => (
-        <a href={link.href} class="border-b border-border py-4 text-lg font-medium">
-          {link.label}
-        </a>
-      ))
-    }
-    {
-      SECONDARY_LINKS.map((link) => (
-        <a href={link.href} class="border-b border-border py-4 text-lg font-medium text-fg-muted">
-          {link.label}
-        </a>
-      ))
-    }
-  </nav>
-  <div class="px-5 py-6">
-    <SocialLinks includeEmail />
+<div id="mobile-menu" class="fixed inset-0 top-16 z-30 hidden lg:hidden" data-open="false">
+  <button
+    type="button"
+    tabindex="-1"
+    aria-hidden="true"
+    data-menu-scrim
+    class="absolute inset-0 bg-black/40 opacity-0 backdrop-blur-[2px] transition-opacity duration-200"
+  ></button>
+
+  <div
+    data-menu-card
+    class="relative mx-3 mt-2 max-h-[calc(100dvh-5.5rem)] origin-top -translate-y-2 scale-[0.98] overflow-y-auto rounded-2xl border border-border bg-bg/95 opacity-0 shadow-2xl backdrop-blur-xl transition-all duration-200"
+  >
+    <div class="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl" aria-hidden="true">
+      <div class="aurora-blob -right-16 -top-16 h-44 w-44 opacity-30" style="background: var(--color-accent)"></div>
+      <div class="aurora-blob -bottom-16 -left-12 h-44 w-44 opacity-25" style="background: var(--color-tone-violet); animation-delay: -8s"></div>
+    </div>
+
+    <nav class="relative grid grid-cols-2 gap-2 p-3" aria-label="Mobile primary">
+      {
+        links.map((link, i) => {
+          const Icon = resolveIcon(link.icon);
+          const tone = TONES[toneAt(i)];
+          const active = isActive(link.href);
+          return (
+            <a
+              href={link.href}
+              aria-current={active ? 'page' : undefined}
+              class:list={[
+                'group flex items-center gap-2.5 rounded-xl border px-2.5 py-2 text-[15px] font-medium transition-all active:scale-[0.97]',
+                active ? 'border-accent/40 bg-accent-soft' : 'border-border/60 bg-surface/60 hover:bg-surface',
+              ]}
+            >
+              <span class:list={['inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg', tone.chip]}>
+                <Icon class="h-4 w-4" aria-hidden="true" />
+              </span>
+              {link.label}
+            </a>
+          );
+        })
+      }
+    </nav>
+
+    <div class="relative flex items-center justify-between border-t border-border px-4 py-3">
+      <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-fg-muted">Find me</span>
+      <SocialLinks includeEmail />
+    </div>
   </div>
 </div>
 
 <script>
   const button = document.getElementById('mobile-menu-button');
   const menu = document.getElementById('mobile-menu');
+  const scrim = menu?.querySelector<HTMLElement>('[data-menu-scrim]');
+  const card = menu?.querySelector<HTMLElement>('[data-menu-card]');
+  const CLOSED_CARD = ['opacity-0', '-translate-y-2', 'scale-[0.98]'];
+  let closeTimer: number | undefined;
 
   function setOpen(open: boolean) {
-    if (!button || !menu) return;
+    if (!button || !menu || !card || !scrim) return;
     button.setAttribute('aria-expanded', String(open));
     button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     button.querySelector('[data-icon="menu-open"]')?.classList.toggle('hidden', open);
     button.querySelector('[data-icon="menu-close"]')?.classList.toggle('hidden', !open);
     document.body.classList.toggle('overflow-hidden', open);
+    window.clearTimeout(closeTimer);
 
     if (open) {
       menu.classList.remove('hidden');
-      menu.classList.add('flex');
       requestAnimationFrame(() => {
-        menu.classList.remove('opacity-0', 'translate-y-2');
+        scrim.classList.remove('opacity-0');
+        card.classList.remove(...CLOSED_CARD);
       });
     } else {
-      menu.classList.add('opacity-0', 'translate-y-2');
-      setTimeout(() => {
-        menu.classList.add('hidden');
-        menu.classList.remove('flex');
-      }, 200);
+      scrim.classList.add('opacity-0');
+      card.classList.add(...CLOSED_CARD);
+      closeTimer = window.setTimeout(() => menu.classList.add('hidden'), 200);
     }
   }
 
   button?.addEventListener('click', () => {
-    const isOpen = button.getAttribute('aria-expanded') === 'true';
-    setOpen(!isOpen);
+    setOpen(button.getAttribute('aria-expanded') !== 'true');
   });
 
+  scrim?.addEventListener('click', () => setOpen(false));
   menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && button?.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      button.focus();
+    }
+  });
 </script>

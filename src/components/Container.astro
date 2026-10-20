@@ -3,11 +3,15 @@ interface Props {
   class?: string;
   as?: keyof HTMLElementTagNameMap;
   narrow?: boolean;
+  [key: `data-${string}`]: string | boolean | undefined;
 }
 
-const { class: className = '', as: Tag = 'div', narrow = false } = Astro.props;
+const { class: className = '', as: Tag = 'div', narrow = false, ...rest } = Astro.props;
 ---
 
-<Tag class:list={['mx-auto w-full px-5 sm:px-8 lg:px-12', narrow ? 'max-w-3xl' : 'max-w-(--container-page)', className]}>
+<Tag
+  class:list={['mx-auto w-full px-5 sm:px-8 lg:px-12', narrow ? 'max-w-3xl' : 'max-w-(--container-page)', className]}
+  {...rest}
+>
   <slot />
 </Tag>

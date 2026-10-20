@@ -12,12 +12,12 @@
 /* ---------------------------------------------------------------- */
 
 :root {
-  --color-bg: #faf9f6;
-  --color-surface: #f1efe9;
-  --color-surface-hover: #e9e6de;
-  --color-border: #e2ded4;
-  --color-fg: #17161a;
-  --color-fg-muted: #5c5a63;
+  --color-bg: #f5f7fb;
+  --color-surface: #ffffff;
+  --color-surface-hover: #eaeff8;
+  --color-border: #dce2ee;
+  --color-fg: #0f1222;
+  --color-fg-muted: #565c72;
   --color-accent: #2f6fef;
   --color-accent-hover: #1d54c9;
   --color-accent-fg: #ffffff;
@@ -27,7 +27,20 @@
   --color-warning: #b45309;
   --color-warning-soft: #b4530916;
 
-  --shadow-color: 20 14% 10%;
+  /* Secondary "tones": used by icon chips, badges, card accents and gradients
+     so different content types get their own colour identity. */
+  --color-tone-violet: #7c3aed;
+  --color-tone-violet-soft: #7c3aed14;
+  --color-tone-cyan: #0e7490;
+  --color-tone-cyan-soft: #0e749014;
+  --color-tone-emerald: #047857;
+  --color-tone-emerald-soft: #04785714;
+  --color-tone-amber: #b45309;
+  --color-tone-amber-soft: #b4530914;
+  --color-tone-rose: #be123c;
+  --color-tone-rose-soft: #be123c12;
+
+  --shadow-color: 224 30% 12%;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,6 +59,16 @@
     --color-success-soft: #4ade8022;
     --color-warning: #fbbf24;
     --color-warning-soft: #fbbf2422;
+    --color-tone-violet: #a78bfa;
+    --color-tone-violet-soft: #a78bfa22;
+    --color-tone-cyan: #22d3ee;
+    --color-tone-cyan-soft: #22d3ee1f;
+    --color-tone-emerald: #34d399;
+    --color-tone-emerald-soft: #34d39920;
+    --color-tone-amber: #fbbf24;
+    --color-tone-amber-soft: #fbbf2420;
+    --color-tone-rose: #fb7185;
+    --color-tone-rose-soft: #fb718522;
   }
 }
 
@@ -64,6 +87,16 @@
   --color-success-soft: #4ade8022;
   --color-warning: #fbbf24;
   --color-warning-soft: #fbbf2422;
+  --color-tone-violet: #a78bfa;
+  --color-tone-violet-soft: #a78bfa22;
+  --color-tone-cyan: #22d3ee;
+  --color-tone-cyan-soft: #22d3ee1f;
+  --color-tone-emerald: #34d399;
+  --color-tone-emerald-soft: #34d39920;
+  --color-tone-amber: #fbbf24;
+  --color-tone-amber-soft: #fbbf2420;
+  --color-tone-rose: #fb7185;
+  --color-tone-rose-soft: #fb718522;
 }
 
 @theme inline {
@@ -81,6 +114,16 @@
   --color-success-soft: var(--color-success-soft);
   --color-warning: var(--color-warning);
   --color-warning-soft: var(--color-warning-soft);
+  --color-tone-violet: var(--color-tone-violet);
+  --color-tone-violet-soft: var(--color-tone-violet-soft);
+  --color-tone-cyan: var(--color-tone-cyan);
+  --color-tone-cyan-soft: var(--color-tone-cyan-soft);
+  --color-tone-emerald: var(--color-tone-emerald);
+  --color-tone-emerald-soft: var(--color-tone-emerald-soft);
+  --color-tone-amber: var(--color-tone-amber);
+  --color-tone-amber-soft: var(--color-tone-amber-soft);
+  --color-tone-rose: var(--color-tone-rose);
+  --color-tone-rose-soft: var(--color-tone-rose-soft);
 
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk Variable", "Inter Variable", ui-sans-serif, sans-serif;
@@ -195,13 +238,214 @@
     box-shadow: 0 0 0 1px var(--color-accent), 0 8px 24px -8px var(--color-accent-soft);
   }
 
+  /* Card hover: lift, tinted ring, and a soft spotlight that follows the
+     pointer (--mx / --my are set by Effects.astro). Set --spot (or use a
+     tone class) to recolour it. */
   .hover-glow {
+    position: relative;
+    isolation: isolate;
+    --spot: var(--color-accent);
+    box-shadow: 0 1px 2px hsl(var(--shadow-color) / 0.04), 0 10px 26px -18px hsl(var(--shadow-color) / 0.16);
     transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
   }
 
+  .hover-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in oklab, var(--spot) 18%, transparent),
+      transparent 62%
+    );
+  }
+
+  .hover-glow:hover::before {
+    opacity: 1;
+  }
+
   .hover-glow:hover {
-    box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-accent) 45%, transparent), 0 16px 32px -16px color-mix(in oklab, var(--color-accent) 55%, transparent);
-    transform: translateY(-2px);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--spot) 45%, transparent),
+      0 18px 34px -18px color-mix(in oklab, var(--spot) 55%, transparent);
+    transform: translateY(-3px);
+  }
+
+  /* Gradient text: slow colour drift across the brand tones. */
+  .text-gradient {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-accent),
+      var(--color-tone-violet) 40%,
+      var(--color-tone-cyan) 75%,
+      var(--color-accent)
+    );
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 9s ease-in-out infinite alternate;
+  }
+
+  @keyframes gradient-shift {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
+  }
+
+  /* Drifting colour blobs behind the hero / CTA. */
+  .aurora-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(70px);
+    opacity: 0.38;
+    animation: aurora-drift 22s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  @keyframes aurora-drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(5%, 8%, 0) scale(1.12); }
+    to { transform: translate3d(-6%, 3%, 0) scale(0.94); }
+  }
+
+  /* Faded dot grid. */
+  .bg-dots {
+    background-image: radial-gradient(color-mix(in oklab, var(--color-fg) 26%, transparent) 1px, transparent 1.3px);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, #000 25%, transparent 78%);
+    mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, #000 25%, transparent 78%);
+  }
+
+  /* Primary button: light sweep on hover. */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .btn-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(110deg, transparent 32%, rgb(255 255 255 / 0.38) 50%, transparent 68%);
+    transform: translateX(-130%);
+    transition: transform 0.75s ease;
+  }
+
+  .btn-shine:hover::after {
+    transform: translateX(130%);
+  }
+
+  /* Gentle bobbing for floating chips. */
+  .animate-float {
+    animation: float 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes float {
+    from { transform: translateY(0); }
+    to { transform: translateY(-12px); }
+  }
+
+  /* Rotating gradient ring (photo frame). */
+  @property --ring-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  .gradient-ring {
+    background: conic-gradient(
+      from var(--ring-angle),
+      var(--color-accent),
+      var(--color-tone-violet),
+      var(--color-tone-cyan),
+      var(--color-tone-emerald),
+      var(--color-accent)
+    );
+    animation: ring-spin 8s linear infinite;
+  }
+
+  @keyframes ring-spin {
+    to { --ring-angle: 360deg; }
+  }
+
+  /* Infinite tech marquee. */
+  .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 48s linear infinite;
+  }
+
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+
+  /* Rotating words: every child shares one grid cell and fades in turn. */
+  .rotator {
+    display: inline-grid;
+  }
+
+  .rotator > span {
+    grid-area: 1 / 1;
+    opacity: 0;
+    animation: rotator 12s infinite;
+  }
+
+  .rotator > span:nth-child(2) { animation-delay: 3s; }
+  .rotator > span:nth-child(3) { animation-delay: 6s; }
+  .rotator > span:nth-child(4) { animation-delay: 9s; }
+
+  @keyframes rotator {
+    0% { opacity: 0; transform: translateY(0.7em); }
+    3% { opacity: 1; transform: translateY(0); }
+    22% { opacity: 1; transform: translateY(0); }
+    25% { opacity: 0; transform: translateY(-0.7em); }
+    100% { opacity: 0; }
+  }
+
+  /* Pulse ring for "current" markers. */
+  .pulse-ring::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0.35;
+    animation: pulse-ring 2.2s ease-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    from { transform: scale(1); opacity: 0.4; }
+    to { transform: scale(2.4); opacity: 0; }
+  }
+
+  /* Reading progress under the header. */
+  .scroll-progress {
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 2px;
+    width: 100%;
+    transform-origin: 0 50%;
+    transform: scaleX(var(--p, 0));
+    background: linear-gradient(90deg, var(--color-accent), var(--color-tone-violet), var(--color-tone-cyan));
   }
 
   .fade-in-up {
@@ -222,43 +466,92 @@
   /* Scroll-reveal: elements start hidden and animate in once, the first
      time they cross into the viewport (see reveal.ts). Staggered children
      use [data-reveal-group] > * for an automatic per-item delay. */
+  /* Reveal uses the individual `translate` property (not `transform`) and
+     per-property transition delays, so it composes with the card hover lift
+     (which uses `transform`) instead of overriding it. */
   [data-reveal] {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
+    translate: 0 24px;
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), translate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   [data-reveal].is-revealed {
     opacity: 1;
-    transform: translateY(0);
+    translate: 0 0;
   }
 
   [data-reveal-group] > * {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    translate: 0 20px;
+    transition:
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      translate 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+    transition-delay: var(--d, 0ms), var(--d, 0ms), 0ms, 0ms, 0ms;
   }
 
   [data-reveal-group].is-revealed > * {
     opacity: 1;
-    transform: translateY(0);
+    translate: 0 0;
   }
 
-  [data-reveal-group].is-revealed > *:nth-child(1) { transition-delay: 0ms; }
-  [data-reveal-group].is-revealed > *:nth-child(2) { transition-delay: 80ms; }
-  [data-reveal-group].is-revealed > *:nth-child(3) { transition-delay: 160ms; }
-  [data-reveal-group].is-revealed > *:nth-child(4) { transition-delay: 240ms; }
-  [data-reveal-group].is-revealed > *:nth-child(5) { transition-delay: 320ms; }
-  [data-reveal-group].is-revealed > *:nth-child(6) { transition-delay: 400ms; }
-  [data-reveal-group].is-revealed > *:nth-child(n + 7) { transition-delay: 480ms; }
+  [data-reveal-group] > *:nth-child(2) { --d: 80ms; }
+  [data-reveal-group] > *:nth-child(3) { --d: 160ms; }
+  [data-reveal-group] > *:nth-child(4) { --d: 240ms; }
+  [data-reveal-group] > *:nth-child(5) { --d: 320ms; }
+  [data-reveal-group] > *:nth-child(6) { --d: 400ms; }
+  [data-reveal-group] > *:nth-child(n + 7) { --d: 480ms; }
 
   @media (prefers-reduced-motion: reduce) {
     [data-reveal],
     [data-reveal-group] > * {
       opacity: 1;
-      transform: none;
+      translate: none;
       transition: none;
     }
+
+    .marquee {
+      overflow-x: auto;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .marquee-track,
+    .aurora-blob,
+    .animate-float,
+    .text-gradient,
+    .gradient-ring,
+    .pulse-ring::after {
+      animation: none !important;
+    }
+
+    .rotator > span {
+      animation: none !important;
+      opacity: 0;
+    }
+
+    .rotator > span:first-child {
+      opacity: 1;
+    }
+  }
+}
+
+/* Native cross-document page transitions (Chromium / Safari 18+); other
+   browsers just navigate normally. The header keeps its own layer so it
+   doesn't flash between pages. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.28s;
+  }
+
+  .site-header {
+    view-transition-name: site-header;
   }
 }

@@ -4,6 +4,7 @@ import GithubIcon from './icons/GithubIcon.astro';
 import LinkedinIcon from './icons/LinkedinIcon.astro';
 import XIcon from './icons/XIcon.astro';
 import { SOCIAL_LINKS, SITE } from '../data/site';
+import { TONES, type Tone } from '../lib/tone';
 
 interface Props {
   class?: string;
@@ -13,19 +14,24 @@ interface Props {
 const { class: className = '', includeEmail = false } = Astro.props;
 
 const icons = { github: GithubIcon, linkedin: LinkedinIcon, twitter: XIcon } as const;
+const iconTones: Record<string, Tone> = { github: 'violet', linkedin: 'blue', twitter: 'cyan', email: 'emerald' };
+
+const base =
+  'inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg-muted transition-all duration-200 hover:-translate-y-1 hover:scale-110';
 ---
 
 <div class:list={['flex items-center gap-2', className]}>
   {
     SOCIAL_LINKS.map((link) => {
       const Icon = icons[link.icon as keyof typeof icons];
+      const tone = TONES[iconTones[link.icon] ?? 'blue'];
       return (
         <a
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={link.label}
-          class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg-muted transition-colors hover:border-fg hover:text-fg"
+          class:list={[base, tone.border, tone.hoverText]}
         >
           <Icon class="h-4 w-4" aria-hidden="true" />
         </a>
@@ -37,7 +43,7 @@ const icons = { github: GithubIcon, linkedin: LinkedinIcon, twitter: XIcon } as 
       <a
         href={`mailto:${SITE.email}`}
         aria-label="Email"
-        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-fg-muted transition-colors hover:border-fg hover:text-fg"
+        class:list={[base, TONES.emerald.border, TONES.emerald.hoverText]}
       >
         <Mail class="h-4 w-4" aria-hidden="true" />
       </a>

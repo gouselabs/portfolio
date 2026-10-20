@@ -2,10 +2,11 @@
 import { ArrowUpRight } from '@lucide/astro';
 import { Image } from 'astro:assets';
 import GithubIcon from './icons/GithubIcon.astro';
-import AbstractArt from './AbstractArt.astro';
+import ProjectCover from './ProjectCover.astro';
 import Badge from './Badge.astro';
 import Tag from './Tag.astro';
 import { statusBadgeVariant } from '../lib/format';
+import { TONES, toneForCategory } from '../lib/tone';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -15,14 +16,23 @@ interface Props {
 
 const { project, size = 'default' } = Astro.props;
 const { data, id } = project;
+
+const toneName = toneForCategory(data.category);
+const tone = TONES[toneName];
+const categoryVariant = toneName === 'blue' ? 'accent' : toneName;
 ---
 
 <article
   class:list={[
     'hover-glow group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface',
+    tone.spot,
     size === 'large' ? 'lg:col-span-2 lg:flex-row' : '',
   ]}
 >
+  <span
+    class:list={['pointer-events-none absolute inset-x-0 top-0 z-20 h-0.5 bg-gradient-to-r to-transparent opacity-70 transition-opacity group-hover:opacity-100', tone.bar]}
+    aria-hidden="true"
+  />
   <a href={`/projects/${id}`} class="absolute inset-0 z-10" aria-label={`View project: ${data.title}`}></a>
 
   <div class:list={['aspect-video overflow-hidden', size === 'large' ? 'lg:aspect-auto lg:w-1/2' : '']}>
@@ -35,7 +45,7 @@ const { data, id } = project;
           class="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
         />
       ) : (
-        <AbstractArt seed={id} variant="nodes" class="transition-transform duration-500 group-hover:scale-105" />
+        <ProjectCover title={data.title} category={data.category} techStack={data.techStack} class="transition-transform duration-500 group-hover:scale-105" />
       )
     }
   </div>
@@ -43,7 +53,7 @@ const { data, id } = project;
   <div class="flex flex-1 flex-col gap-3 p-6">
     <div class="flex items-center gap-2">
       <Badge variant={statusBadgeVariant(data.status)}>{data.status}</Badge>
-      <Badge variant="accent">{data.category}</Badge>
+      <Badge variant={categoryVariant}>{data.category}</Badge>
     </div>
 
     <h3 class="font-display text-xl font-medium">{data.title}</h3>
@@ -54,9 +64,9 @@ const { data, id } = project;
     </div>
 
     <div class="relative z-20 mt-2 flex items-center gap-4 text-sm">
-      <span class="inline-flex items-center gap-1 font-medium text-fg transition-colors group-hover:text-accent">
+      <span class:list={['inline-flex items-center gap-1 font-medium text-fg transition-colors', tone.groupHoverText]}>
         View project
-        <ArrowUpRight class="h-3.5 w-3.5" aria-hidden="true" />
+        <ArrowUpRight class="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
       </span>
       {
         data.githubUrl && (

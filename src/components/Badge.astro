@@ -1,17 +1,26 @@
 ---
+import { TONES, type Tone } from '../lib/tone';
+
+type Variant = 'default' | 'accent' | 'outline' | 'success' | 'warning' | Exclude<Tone, 'blue'>;
+
 interface Props {
-  variant?: 'default' | 'accent' | 'outline' | 'success' | 'warning';
+  variant?: Variant;
   class?: string;
 }
 
 const { variant = 'default', class: className = '' } = Astro.props;
 
-const variants = {
-  default: 'bg-surface text-fg-muted',
-  accent: 'bg-accent-soft text-accent',
+const variants: Record<string, string> = {
+  default: 'bg-surface-hover text-fg-muted',
+  accent: TONES.blue.chip,
   outline: 'border border-border text-fg-muted',
   success: 'bg-success-soft text-success',
   warning: 'bg-warning-soft text-warning',
+  violet: TONES.violet.chip,
+  cyan: TONES.cyan.chip,
+  emerald: TONES.emerald.chip,
+  amber: TONES.amber.chip,
+  rose: TONES.rose.chip,
 };
 ---
 

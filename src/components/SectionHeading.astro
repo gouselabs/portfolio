@@ -1,13 +1,21 @@
 ---
+import { resolveIcon } from '../lib/icons';
+import { TONES, type Tone } from '../lib/tone';
+
 interface Props {
   eyebrow?: string;
   title: string;
   description?: string;
   align?: 'left' | 'center';
+  icon?: string;
+  tone?: Tone;
   class?: string;
 }
 
-const { eyebrow, title, description, align = 'left', class: className = '' } = Astro.props;
+const { eyebrow, title, description, align = 'left', icon, tone = 'blue', class: className = '' } = Astro.props;
+
+const Icon = icon ? resolveIcon(icon) : null;
+const toneClasses = TONES[tone];
 ---
 
 <div class:list={['max-w-2xl', align === 'center' ? 'mx-auto text-center' : '', className]}>
@@ -15,11 +23,12 @@ const { eyebrow, title, description, align = 'left', class: className = '' } = A
     eyebrow && (
       <span
         class:list={[
-          'mb-3 inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-accent',
+          'mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 font-mono text-xs uppercase tracking-[0.2em]',
+          toneClasses.chip,
           align === 'center' ? 'mx-auto' : '',
         ]}
       >
-        <span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
+        {Icon ? <Icon class="h-3.5 w-3.5" aria-hidden="true" /> : <span class:list={['h-1.5 w-1.5 rounded-full', toneClasses.dot]} aria-hidden="true" />}
         {eyebrow}
       </span>
     )

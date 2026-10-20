@@ -8,7 +8,7 @@ import Breadcrumb from '../components/Breadcrumb.astro';
 import Badge from '../components/Badge.astro';
 import Tag from '../components/Tag.astro';
 import Button from '../components/Button.astro';
-import AbstractArt from '../components/AbstractArt.astro';
+import ProjectCover from '../components/ProjectCover.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import CodeBlockEnhancer from '../components/CodeBlockEnhancer.astro';
@@ -33,7 +33,7 @@ const keywords = [data.title, data.category, ...data.techStack, 'project'];
         data.screenshot ? (
           <Image src={data.screenshot} alt={data.coverAlt} width={1600} loading="eager" fetchpriority="high" class="h-full w-full object-cover object-top" />
         ) : (
-          <AbstractArt seed={id} variant="nodes" />
+          <ProjectCover title={data.title} category={data.category} techStack={data.techStack} />
         )
       }
     </div>

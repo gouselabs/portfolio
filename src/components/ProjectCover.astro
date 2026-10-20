@@ -1,0 +1,55 @@
+---
+// Cover for projects that have no screenshot yet. Instead of generic abstract
+// art it shows what the project actually is: a small editor window with the
+// project name and its stack laid out as a pipeline.
+import { ChevronRight } from '@lucide/astro';
+import * as lucide from '@lucide/astro';
+import { TONES, toneForCategory } from '../lib/tone';
+
+interface Props {
+  title: string;
+  category: string;
+  techStack: string[];
+  class?: string;
+}
+
+const { title, category, techStack, class: className = '' } = Astro.props;
+
+const tone = TONES[toneForCategory(category)];
+const stack = techStack.slice(0, 4);
+const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+const CATEGORY_ICONS: Record<string, typeof lucide.Server> = {
+  AI: lucide.Sparkles,
+  Backend: lucide.Server,
+  'Full Stack': lucide.Layers,
+  'Developer Tools': lucide.Wrench,
+  Experiments: lucide.FlaskConical,
+};
+const Icon = CATEGORY_ICONS[category] ?? lucide.Boxes;
+---
+
+<div class:list={['relative flex h-full w-full items-center justify-center overflow-hidden bg-gradient-to-br to-transparent p-4 sm:p-6', tone.wash, className]}>
+  <div class="bg-dots pointer-events-none absolute inset-0 opacity-50" aria-hidden="true"></div>
+  <div class:list={['pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-20 blur-3xl', tone.blob]} aria-hidden="true"></div>
+  <Icon class:list={['pointer-events-none absolute -bottom-4 -right-3 h-28 w-28 opacity-[0.12]', tone.text]} aria-hidden="true" />
+
+  <div class="relative w-full max-w-sm overflow-hidden rounded-xl border border-border bg-bg/85 shadow-lg backdrop-blur" aria-hidden="true">
+    <div class="flex items-center gap-1.5 border-b border-border px-3 py-2">
+      <span class="h-2 w-2 rounded-full bg-tone-rose/70"></span>
+      <span class="h-2 w-2 rounded-full bg-tone-amber/70"></span>
+      <span class="h-2 w-2 rounded-full bg-tone-emerald/70"></span>
+      <span class="ml-2 truncate font-mono text-[10px] text-fg-muted">~/{slug}</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-x-1 gap-y-1.5 px-3 py-3">
+      {
+        stack.map((tech, i) => (
+          <>
+            <span class:list={['rounded-md px-2 py-0.5 font-mono text-[11px] font-medium', tone.chip]}>{tech}</span>
+            {i < stack.length - 1 && <ChevronRight class="h-3 w-3 shrink-0 text-fg-muted" />}
+          </>
+        ))
+      }
+    </div>
+  </div>
+</div>

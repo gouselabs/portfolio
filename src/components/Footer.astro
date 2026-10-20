@@ -11,7 +11,7 @@ const year = new Date().getFullYear();
 <footer class="relative mt-8 border-t border-border">
   <div class="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-70" aria-hidden="true"></div>
 
-  <Container class="grid gap-12 py-16 lg:grid-cols-[1.4fr_1fr_1fr]">
+  <Container class="grid gap-10 py-12 sm:py-16 lg:gap-12 lg:grid-cols-[1.4fr_1fr_1fr]">
     <div class="max-w-sm">
       <a href="/" class="group inline-flex items-center gap-2.5 font-display text-lg font-semibold tracking-tight">
         <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-tone-violet text-white transition-transform duration-300 group-hover:rotate-[-8deg] group-hover:scale-110">
@@ -23,6 +23,7 @@ const year = new Date().getFullYear();
       <SocialLinks class="mt-6" includeEmail />
     </div>
 
+    <div class="grid grid-cols-2 gap-8 lg:contents">
     {
       FOOTER_LINKS.map((group, gi) => (
         <div>
@@ -46,6 +47,7 @@ const year = new Date().getFullYear();
         </div>
       ))
     }
+    </div>
   </Container>
 
   <Container class="flex flex-col gap-2 border-t border-border py-6 text-xs text-fg-muted sm:flex-row sm:items-center sm:justify-between">
